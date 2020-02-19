@@ -200,7 +200,9 @@
     <ClInclude Include="DeviceMgr.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MiniView.h" />
     <ClInclude Include="MultiTexture.h" />
+    <ClInclude Include="MyForm.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SingleTexture.h" />
     <ClInclude Include="stdafx.h" />
@@ -216,7 +218,9 @@
     <ClCompile Include="DeviceMgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MiniView.cpp" />
     <ClCompile Include="MultiTexture.cpp" />
+    <ClCompile Include="MyForm.cpp" />
     <ClCompile Include="SingleTexture.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -15,7 +15,7 @@ public:
 public:
 	HRESULT InitDevice(DISPLAY_MODE eMode);
 	void Render_Begin();
-	void Render_End();
+	void Render_End(HWND hWnd = nullptr);
 	void Release();
 
 private:

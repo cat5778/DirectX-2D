@@ -39,6 +39,11 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
+public:
+	CSplitterWnd m_MainSplitter;
+	CSplitterWnd m_SecondSplitter;
+
+
 };
 
 

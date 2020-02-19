@@ -19,7 +19,12 @@ public:
 	virtual int Update() override;
 	virtual void LateUpdate() override;
 	virtual void Render() override;
-	
+public:
+	void MiniView();
+	void TileChange(const D3DXVECTOR3& vPos, const BYTE& byDrawID, const BYTE& byOption = 0);
+private:
+	int	GetTileIndex(const D3DXVECTOR3& vPos);
+	bool IsPicking(const D3DXVECTOR3& vPos, int iIndex);
 	POINT TileDrawConverstion(int _drawID);
 public:
 	vector<TILE_INFO*>	m_vecTile;

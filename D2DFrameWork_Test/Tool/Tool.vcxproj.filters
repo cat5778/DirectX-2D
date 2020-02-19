@@ -37,6 +37,12 @@
     <Filter Include="90.Managers\01.TextureManager\00.Texture">
       <UniqueIdentifier>{cfb4aa91-7514-448e-a39c-f21006c79e5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.View\00.MiniView">
+      <UniqueIdentifier>{b4c68629-9dbb-4355-ad95-ad6e2393a5b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.View\01.FormView">
+      <UniqueIdentifier>{05b19703-8ac6-439d-b662-b04f6ff7636e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -81,6 +87,12 @@
     <ClInclude Include="Terrain.h">
       <Filter>05.GameObjects</Filter>
     </ClInclude>
+    <ClInclude Include="MyForm.h">
+      <Filter>03.View\01.FormView</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniView.h">
+      <Filter>03.View\00.MiniView</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tool.cpp">
@@ -118,6 +130,12 @@
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
       <Filter>05.GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="MyForm.cpp">
+      <Filter>03.View\01.FormView</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniView.cpp">
+      <Filter>03.View\00.MiniView</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

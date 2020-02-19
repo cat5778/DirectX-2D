@@ -111,7 +111,7 @@ void CDeviceMgr::Render_Begin()
 	m_pSprite->Begin(D3DXSPRITE_ALPHABLEND);
 }
 
-void CDeviceMgr::Render_End()
+void CDeviceMgr::Render_End(HWND hWnd)
 {
 	// 스프라이트 다 그렸어!
 	m_pSprite->End();
@@ -120,7 +120,7 @@ void CDeviceMgr::Render_End()
 	m_pGraphicDev->EndScene();
 
 	// 화면에 출력
-	m_pGraphicDev->Present(nullptr, nullptr, nullptr, nullptr);
+	m_pGraphicDev->Present(nullptr, nullptr, hWnd, nullptr);
 }
 
 void CDeviceMgr::Release()

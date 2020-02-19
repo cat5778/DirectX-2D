@@ -8,10 +8,12 @@
 #ifndef SHARED_HANDLERS
 #include "Tool.h"
 #endif
-
+#include "MainFrm.h"
 #include "ToolDoc.h"
 #include "ToolView.h"
 #include "Terrain.h"
+#include "MiniView.h"
+#include "MyForm.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -26,6 +28,8 @@ BEGIN_MESSAGE_MAP(CToolView, CScrollView)
 	ON_COMMAND(ID_FILE_PRINT, &CScrollView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_DIRECT, &CScrollView::OnFilePrint)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CScrollView::OnFilePrintPreview)
+	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 // CToolView 생성/소멸
@@ -37,7 +41,6 @@ CToolView::CToolView()
 	: m_pDeviceMgr(CDeviceMgr::GetInstance()),
 	m_pTextureMgr(CTextureMgr::GetInstance())
 {
-	// TODO: 여기에 생성 코드를 추가합니다.
 
 }
 
@@ -51,8 +54,6 @@ CToolView::~CToolView()
 
 BOOL CToolView::PreCreateWindow(CREATESTRUCT& cs)
 {
-	// TODO: CREATESTRUCT cs를 수정하여 여기에서
-	//  Window 클래스 또는 스타일을 수정합니다.
 
 	return CScrollView::PreCreateWindow(cs);
 }
@@ -67,12 +68,25 @@ void CToolView::OnDraw(CDC* /*pDC*/)
 		return;
 
 	//cout << "df" << endl;
-	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 	m_pDeviceMgr->Render_Begin();
+
 	CTerrain::GetInstance()->Render();
 
 	m_pDeviceMgr->Render_End();
-	Invalidate(FALSE);
+	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	NULL_CHECK(pFrameWnd);
+
+	CMiniView* pMiniView = dynamic_cast<CMiniView*>(pFrameWnd->m_SecondSplitter.GetPane(0, 0));
+	NULL_CHECK(pMiniView);
+
+	
+
+	pMiniView->Invalidate(FALSE); // 미니뷰 갱신
+	
+	
+	//Invalidate(FALSE);
+
+
 
 }
 
@@ -87,12 +101,10 @@ BOOL CToolView::OnPreparePrinting(CPrintInfo* pInfo)
 
 void CToolView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: 인쇄하기 전에 추가 초기화 작업을 추가합니다.
 }
 
 void CToolView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: 인쇄 후 정리 작업을 추가합니다.
 }
 
 
@@ -123,7 +135,6 @@ CToolDoc* CToolView::GetDocument() const // 디버그되지 않은 버전은 인라인으로 지
 void CToolView::OnInitialUpdate()
 {
 	CScrollView::OnInitialUpdate();
-	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	g_hWnd = m_hWnd;
 
 	// 스크롤 범위 지정
@@ -131,6 +142,28 @@ void CToolView::OnInitialUpdate()
 	int iCY = 100* TILECY;
 
 	CScrollView::SetScrollSizes(MM_TEXT, CSize(iCX, iCY));
+
+	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	NULL_CHECK_MSG(pFrameWnd, L"pFrameWnd is null");
+
+	RECT rcFrame = {};
+
+	// 윈도우의 크기(테두리 + 클라이언트 영역) 얻어오는 함수.(스크린 좌표 기준)
+	pFrameWnd->GetWindowRect(&rcFrame);
+	::SetRect(&rcFrame, 0, 0, rcFrame.right - rcFrame.left, rcFrame.bottom - rcFrame.top);
+
+	RECT rcView = {};
+
+	// 윈도우의 클라이언트 영역(테두리를 포함하지 않은) 크기 얻어오는 함수. (클라이언트 좌표 기준)
+	GetClientRect(&rcView);
+
+	// 현재 프레임윈도우와 View 사이의 갭들을 구한다.
+	int iGapX = rcFrame.right - rcView.right;
+	int iGapY = rcFrame.bottom - rcView.bottom;
+
+	// 프레임윈도우의 크기를 새로 설정.
+	pFrameWnd->SetWindowPos(nullptr, 0, 0, WINCX + iGapX, WINCY + iGapY, SWP_NOZORDER | SWP_NOMOVE);
+
 
 
 	HRESULT hr = m_pDeviceMgr->InitDevice(MODE_WIN);
@@ -146,4 +179,58 @@ void CToolView::OnInitialUpdate()
 
 	CTerrain::GetInstance()->Initialize();
 	CTerrain::GetInstance()->m_pView = this;
+}
+
+
+void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	cout << "X=" << point.x << " Y=" << point.y << endl;
+	D3DXVECTOR3 vPoint =
+	{
+		(float)point.x + CScrollView::GetScrollPos(0),
+		(float)point.y + CScrollView::GetScrollPos(1),
+		0.f
+	};
+	cout << "X=" << vPoint.x << " Y=" << vPoint.y << endl;
+
+	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	NULL_CHECK(pFrameWnd);
+
+	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+	NULL_CHECK(pFormView);
+
+	CTerrain::GetInstance()->TileChange(vPoint, 6);
+	// 화면 갱신 (WM_PAINT 발생)
+	Invalidate(FALSE);
+
+	CScrollView::OnLButtonDown(nFlags, point);
+}
+
+
+void CToolView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	{
+		D3DXVECTOR3 vPoint =
+		{
+			(float)point.x + CScrollView::GetScrollPos(0),
+			(float)point.y + CScrollView::GetScrollPos(1),
+			0.f
+		};
+
+		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+		NULL_CHECK(pFrameWnd);
+
+		CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+		NULL_CHECK(pFormView);
+
+
+		//m_pTerrain->TileChange(vPoint, pFormView->m_MapTool.m_iDrawID);
+		CTerrain::GetInstance()->TileChange(vPoint, 6);
+
+		// 화면 갱신 (WM_PAINT 발생)
+		Invalidate(FALSE);
+	}
+
+	CScrollView::OnMouseMove(nFlags, point);
 }

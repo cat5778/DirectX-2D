@@ -4,8 +4,10 @@
 
 #include "stdafx.h"
 #include "Tool.h"
-
 #include "MainFrm.h"
+#include "MyForm.h"
+#include "ToolView.h"
+#include "MiniView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -35,7 +37,6 @@ static UINT indicators[] =
 
 CMainFrame::CMainFrame()
 {
-	// TODO: 여기에 멤버 초기화 코드를 추가합니다.
 }
 
 CMainFrame::~CMainFrame()
@@ -61,7 +62,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//}
 	//m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
 
-	//// TODO: 도구 모음을 도킹할 수 없게 하려면 이 세 줄을 삭제하십시오.
 	//m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
 	//EnableDocking(CBRS_ALIGN_ANY);
 	//DockControlBar(&m_wndToolBar);
@@ -74,8 +74,6 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	if( !CFrameWnd::PreCreateWindow(cs) )
 		return FALSE;
-	// TODO: CREATESTRUCT cs를 수정하여 여기에서
-	//  Window 클래스 또는 스타일을 수정합니다.
 
 	return TRUE;
 }
@@ -101,7 +99,21 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
-	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+	m_MainSplitter.CreateStatic(this, 1, 2);
+	m_MainSplitter.CreateView(0, 1, RUNTIME_CLASS(CToolView), CSize(WINCX, WINCY), pContext);
+	m_MainSplitter.SetColumnInfo(0, 300, 300);
 
-	return CFrameWnd::OnCreateClient(lpcs, pContext);
+	
+	m_SecondSplitter.CreateStatic(&m_MainSplitter, 2, 1, WS_CHILD | WS_VISIBLE, m_MainSplitter.IdFromRowCol(0, 0));
+	m_SecondSplitter.CreateView(0, 0, RUNTIME_CLASS(CMiniView), CSize(300, 300), pContext);
+	m_SecondSplitter.CreateView(1, 0, RUNTIME_CLASS(CMyForm), CSize(300, 300), pContext);
+
+	//m_MainSplitter.CreateStatic(this, 1, 2);	
+
+	//m_MainSplitter.CreateView(0, 0, RUNTIME_CLASS(CMyForm), CSize(100, WINCY), pContext);
+	//m_MainSplitter.CreateView(0, 1, RUNTIME_CLASS(CToolView), CSize(WINCX, WINCY), pContext);
+
+
+
+	return TRUE;
 }
