@@ -22,6 +22,18 @@
     <Filter Include="90.Manager\Keymgr">
       <UniqueIdentifier>{67f60920-4250-4da0-a5d7-47ffd9c2e005}</UniqueIdentifier>
     </Filter>
+    <Filter Include="90.Manager\XMLMgr">
+      <UniqueIdentifier>{f3773824-85ef-4bc2-b635-04aaf163ecfa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="90.Manager\TextureMgr">
+      <UniqueIdentifier>{204c9149-99ad-407f-9df5-1d0ca8d440f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="90.Manager\DeviceMgr">
+      <UniqueIdentifier>{4dbba647-cf25-4b07-b635-7dc887282d3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GameObjects\Terrain">
+      <UniqueIdentifier>{4cbd04f3-dcaa-434f-a0fc-2cfd2fee7693}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -39,12 +51,31 @@
     <ClInclude Include="MainGame.h">
       <Filter>01.MainGame</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>10.GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="KeyManager.h">
       <Filter>90.Manager\Keymgr</Filter>
     </ClInclude>
+    <ClInclude Include="XMLManager.h">
+      <Filter>90.Manager\XMLMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiTexture.h">
+      <Filter>90.Manager\TextureMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleTexture.h">
+      <Filter>90.Manager\TextureMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>90.Manager\TextureMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureMgr.h">
+      <Filter>90.Manager\TextureMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceMgr.h">
+      <Filter>90.Manager\DeviceMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>10.GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -56,12 +87,34 @@
     <ClCompile Include="MainGame.cpp">
       <Filter>01.MainGame</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>10.GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="KeyManager.cpp">
       <Filter>90.Manager\Keymgr</Filter>
     </ClCompile>
+    <ClCompile Include="XMLManager.cpp">
+      <Filter>90.Manager\XMLMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml2.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleTexture.cpp">
+      <Filter>90.Manager\TextureMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>90.Manager\TextureMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureMgr.cpp">
+      <Filter>90.Manager\TextureMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiTexture.cpp">
+      <Filter>90.Manager\TextureMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="DeviceMgr.cpp">
+      <Filter>90.Manager\DeviceMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>10.GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

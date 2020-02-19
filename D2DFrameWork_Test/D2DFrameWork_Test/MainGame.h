@@ -1,6 +1,4 @@
 #pragma once
-class CPlayer;
-class CAstar;
 class CMainGame
 {
 private:
@@ -20,10 +18,9 @@ private:
 
 public:
 	static CMainGame* Create();
-
 private:
 	HDC m_hDC;
-	CPlayer*	m_pPlayer;
-	CAstar*	m_Astar;
+	CDeviceMgr*		m_pDevice;
+
 };
 

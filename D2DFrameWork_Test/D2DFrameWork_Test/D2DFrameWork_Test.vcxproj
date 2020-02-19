@@ -156,24 +156,39 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D2DFrameWork_Test.h" />
+    <ClInclude Include="DeviceMgr.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="MainGame.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="MultiTexture.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SingleTexture.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureMgr.h" />
+    <ClInclude Include="XMLManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="D2DFrameWork_Test.cpp" />
+    <ClCompile Include="DeviceMgr.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="MainGame.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="MultiTexture.cpp" />
+    <ClCompile Include="SingleTexture.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureMgr.cpp" />
+    <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="XMLManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="D2DFrameWork_Test.rc" />

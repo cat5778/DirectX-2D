@@ -17,18 +17,27 @@
 #include <windows.h>
 
 // C 런타임 헤더 파일입니다.
+#include <iostream>
+
 #include <stdlib.h>
+#include <iostream>
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
-#include <algorithm>
 #include <iostream>
-#include <list>
-#include <vector>
-#include <map>
 #include <deque>
 #include <stack>
 #include <cmath>
+
+
+#include <string>
+#include <vector>
+#include <list>
+#include <map>
+#include <algorithm>
+#include <functional>
+
+
 #include <d3d9.h>
 #pragma comment(lib, "d3d9.lib")
 #include <d3dx9.h>
@@ -38,10 +47,15 @@
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 #include "Define.h"
 #include "Extern.h"
+#include "Enum.h"
 #include "Struct.h"
 #include "Function.h"
 #include "tinyxml2.h"
+#include "XMLManager.h"
+
 using namespace std;
 
 //manager
 #include "KeyManager.h"
+#include "TextureMgr.h"
+#include "DeviceMgr.h"

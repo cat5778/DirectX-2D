@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "MainGame.h"
-#include "Player.h"
 CMainGame::CMainGame()
-	: m_pPlayer(nullptr)
+	:	m_pDevice(nullptr)
 {
 }
 
@@ -15,10 +14,11 @@ CMainGame::~CMainGame()
 HRESULT CMainGame::Initialize()
 {
 	m_hDC = GetDC(g_hWnd);
+	m_pDevice = CDeviceMgr::GetInstance();
+	m_pDevice->InitDevice(MODE_WIN);
 
-	//m_pPlayer = CPlayer::Create();
-	//NULL_CHECK_MSG_RETURN(m_pPlayer, L"Player Create Failed", E_FAIL);
 
+	
 	return S_OK;
 }
 
@@ -38,7 +38,7 @@ void CMainGame::Update()
 		//Coordinate pos = { pt.x / TILECX,pt.y / TILECY };
 	}
 
-	//m_pPlayer->Update();
+
 }
 
 void CMainGame::LateUpdate()
@@ -50,15 +50,20 @@ void CMainGame::Render()
 {
 	//Rectangle(m_hDC, 0, 0, WINCX, WINCY);
 	//m_pPlayer->Render(m_hDC);
+	CDeviceMgr::GetInstance()->Render_Begin();
 
+
+	CDeviceMgr::GetInstance()->Render_End();
 
 }
 
 void CMainGame::Release()
 {
+	CDeviceMgr::GetInstance()->DestroyInstance();
+	
+	
 	ReleaseDC(g_hWnd, m_hDC);
 
-	SafeDelete(m_pPlayer);
 }
 
 CMainGame* CMainGame::Create()
