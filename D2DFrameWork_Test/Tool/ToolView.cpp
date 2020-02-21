@@ -67,7 +67,6 @@ void CToolView::OnDraw(CDC* /*pDC*/)
 	if (!pDoc)
 		return;
 
-	//cout << "df" << endl;
 	m_pDeviceMgr->Render_Begin();
 
 	CTerrain::GetInstance()->Render();
@@ -79,12 +78,11 @@ void CToolView::OnDraw(CDC* /*pDC*/)
 	CMiniView* pMiniView = dynamic_cast<CMiniView*>(pFrameWnd->m_SecondSplitter.GetPane(0, 0));
 	NULL_CHECK(pMiniView);
 
-	
 
+	
 	pMiniView->Invalidate(FALSE); // ¹Ì´Ïºä °»½Å
 	
 	
-	//Invalidate(FALSE);
 
 
 

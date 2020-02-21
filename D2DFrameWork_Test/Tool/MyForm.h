@@ -3,7 +3,6 @@
 #include "TileTool.h"
 #include "afxwin.h"
 // CMyForm Æû ºäÀÔ´Ï´Ù.
-//TODO: Formºä ¹öÆ°¸¸µéÂ÷·Ê
 class CMyForm : public CFormView
 {
 	DECLARE_DYNCREATE(CMyForm)
@@ -45,6 +44,8 @@ public:
 
 public:
 	CListBox m_ListBox;
+	CStatic m_Preview;
+
 
 public:
 	map<CString, CString> m_mTilePath;
