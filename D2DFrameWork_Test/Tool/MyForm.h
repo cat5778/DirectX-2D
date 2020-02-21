@@ -33,6 +33,8 @@ public:
 	//afx_msg
 	afx_msg void OnBnClickedTileButton();
 	afx_msg void OnEnChangeTileNum();
+	afx_msg void OnEnChangeTileOption();
+	afx_msg void OnLbnSelchangeList();
 
 public:
 	TileTool		m_TileTool;
@@ -43,14 +45,15 @@ public:
 
 public:
 	CListBox m_ListBox;
-	BYTE m_byDrawID;
+
+public:
 	map<CString, CString> m_mTilePath;
 	wstring m_Texname;
+	BYTE m_byDrawID;
+	BYTE m_byOption;
 
 
 
-	afx_msg void OnEnChangeTileOption();
-	afx_msg void OnLbnSelchangeList();
 };
 
 

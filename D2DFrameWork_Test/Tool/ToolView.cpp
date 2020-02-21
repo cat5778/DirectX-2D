@@ -199,7 +199,7 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
 	NULL_CHECK(pFormView);
 
-	CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byDrawID);
+	CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byDrawID, pFormView->m_byOption, pFormView->m_Texname);
 	
 
 	// 화면 갱신 (WM_PAINT 발생)
@@ -228,8 +228,7 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 
 
 		//m_pTerrain->TileChange(vPoint, pFormView->m_MapTool.m_iDrawID);
-
-		CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byDrawID,0, pFormView->m_Texname);
+		CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byDrawID, pFormView->m_byOption, pFormView->m_Texname);
 
 		// 화면 갱신 (WM_PAINT 발생)
 		Invalidate(FALSE);

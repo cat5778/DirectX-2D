@@ -39,7 +39,7 @@ typedef struct tagTileInfo
 	D3DXVECTOR3 vSize;
 	BYTE byDrawID;
 	BYTE byOption;
-	wstring wsTexKey;
+	std::wstring wsTexKey;
 }TILE_INFO,*PTILE_INFO;
 
 typedef struct tagFrame

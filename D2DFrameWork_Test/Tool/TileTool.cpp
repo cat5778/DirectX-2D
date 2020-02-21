@@ -8,8 +8,8 @@
 #include "DirectoryMgr.h"
 #include "MainFrm.h"
 #include "MyForm.h"
-
-
+#include "ToolView.h"
+#include "Terrain.h"
 // TileTool 대화 상자입니다.
 
 IMPLEMENT_DYNAMIC(TileTool, CDialog)
@@ -34,6 +34,8 @@ void TileTool::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(TileTool, CDialog)
 	ON_WM_DROPFILES()
 	ON_BN_CLICKED(IDOK, &TileTool::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_BUTTON1, &TileTool::OnBnClickedSave)
+	ON_BN_CLICKED(IDC_BUTTON5, &TileTool::OnBnClickedLoad)
 END_MESSAGE_MAP()
 
 
@@ -99,4 +101,42 @@ void TileTool::OnBnClickedOk()
 	}
 
 	CDialog::OnOK();
+}
+
+
+void TileTool::OnBnClickedSave()
+{
+	CFileDialog Dlg(FALSE, L".dat", L"제목 없음.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Data Files(*.dat)|*.dat|Text Files(*.txt)|*.txt||", this);
+
+	TCHAR szCurrentDir[MAX_STR] = L"";
+
+	::GetCurrentDirectory(MAX_STR, szCurrentDir);
+	::PathRemoveFileSpec(szCurrentDir);
+	::PathCombine(szCurrentDir, szCurrentDir, L"Data");
+
+	Dlg.m_ofn.lpstrInitialDir = szCurrentDir;
+
+	if (IDOK == Dlg.DoModal())
+	{
+		CTerrain::GetInstance()->SaveTile(Dlg.GetPathName());
+	}
+}
+
+
+void TileTool::OnBnClickedLoad()
+{
+	CFileDialog Dlg(TRUE, L".dat", L"제목 없음.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Data Files(*.dat)|*.dat|Text Files(*.txt)|*.txt||", this);
+
+	TCHAR szCurrentDir[MAX_STR] = L"";
+
+	::GetCurrentDirectory(MAX_STR, szCurrentDir);
+	::PathRemoveFileSpec(szCurrentDir);
+	::PathCombine(szCurrentDir, szCurrentDir, L"Data");
+
+	Dlg.m_ofn.lpstrInitialDir = szCurrentDir;
+
+	if (IDOK == Dlg.DoModal())
+		CTerrain::GetInstance()->LoadTile(Dlg.GetPathName());
 }

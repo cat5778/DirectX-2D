@@ -23,6 +23,8 @@ protected:
 public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnBnClickedOk();
+	afx_msg void OnBnClickedSave();
+	afx_msg void OnBnClickedLoad();
 
 public:
 	CListBox m_ListBox;
