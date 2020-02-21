@@ -42,6 +42,7 @@ protected:
 public:
 	CSplitterWnd m_MainSplitter;
 	CSplitterWnd m_SecondSplitter;
+	CSplitterWnd m_ThirdSplitter;
 
 
 };

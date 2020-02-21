@@ -5,13 +5,15 @@
 #include "Tool.h"
 #include "MyForm.h"
 
-
 // CMyForm
 
 IMPLEMENT_DYNCREATE(CMyForm, CFormView)
 
 CMyForm::CMyForm()
-	: CFormView(IDD_MYFORM)
+	: CFormView(IDD_MYFORM),
+	m_byDrawID(0),
+	m_Texname(L"TileSet1")
+
 {
 
 }
@@ -23,9 +25,14 @@ CMyForm::~CMyForm()
 void CMyForm::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_EDIT1, m_byDrawID);
+	DDX_Control(pDX, IDC_LIST1, m_ListBox);
 }
 
 BEGIN_MESSAGE_MAP(CMyForm, CFormView)
+	ON_BN_CLICKED(IDC_BUTTON2, &CMyForm::OnBnClickedTileButton)
+	ON_EN_CHANGE(IDC_EDIT1, &CMyForm::OnEnChangeTileNum)
+	ON_LBN_SELCHANGE(IDC_LIST1, &CMyForm::OnLbnSelchangeList)
 END_MESSAGE_MAP()
 
 
@@ -52,5 +59,47 @@ void CMyForm::Dump(CDumpContext& dc) const
 void CMyForm::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
+
+	m_TileTool.Create(IDD_TILETOOL);
+
+}
+
+
+
+void CMyForm::OnBnClickedTileButton()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	m_TileTool.ShowWindow(SW_SHOW);
+
+}
+
+
+
+void CMyForm::OnEnChangeTileNum()
+{
+	UpdateData(TRUE);
+	
+	cout << (int)m_byDrawID << endl;
+
+}
+
+
+void CMyForm::OnEnChangeTileOption()
+{
+	UpdateData(TRUE);
+
+
+}
+
+
+void CMyForm::OnLbnSelchangeList()
+{
+	CString csItemName;
+	
+	//cout << csItemName << endl;
+	m_ListBox.GetText(m_ListBox.GetCurSel(), csItemName);
+	m_Texname = csItemName.GetString();
+	wcout << m_Texname << endl;
 
 }

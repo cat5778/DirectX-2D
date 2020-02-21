@@ -199,7 +199,9 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
 	NULL_CHECK(pFormView);
 
-	CTerrain::GetInstance()->TileChange(vPoint, 6);
+	CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byDrawID);
+	
+
 	// 화면 갱신 (WM_PAINT 발생)
 	Invalidate(FALSE);
 
@@ -214,7 +216,7 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 		D3DXVECTOR3 vPoint =
 		{
 			(float)point.x + CScrollView::GetScrollPos(0),
-			(float)point.y + CScrollView::GetScrollPos(1),
+			(float)point.y + CScrollView::GetScrollPos(1), 
 			0.f
 		};
 
@@ -226,7 +228,8 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 
 
 		//m_pTerrain->TileChange(vPoint, pFormView->m_MapTool.m_iDrawID);
-		CTerrain::GetInstance()->TileChange(vPoint, 6);
+
+		CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byDrawID,0, pFormView->m_Texname);
 
 		// 화면 갱신 (WM_PAINT 발생)
 		Invalidate(FALSE);

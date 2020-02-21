@@ -43,6 +43,12 @@
     <Filter Include="03.View\01.FormView">
       <UniqueIdentifier>{05b19703-8ac6-439d-b662-b04f6ff7636e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.View\02.PreView">
+      <UniqueIdentifier>{7afbf21a-01c6-4ae0-949d-e4312c219a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="90.Managers\02.CDrectoryManger">
+      <UniqueIdentifier>{1f8d98f5-53a1-4a54-b337-219a3d0e40f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -93,6 +99,13 @@
     <ClInclude Include="MiniView.h">
       <Filter>03.View\00.MiniView</Filter>
     </ClInclude>
+    <ClInclude Include="PreView.h">
+      <Filter>03.View\02.PreView</Filter>
+    </ClInclude>
+    <ClInclude Include="TileTool.h">
+      <Filter>04.Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectoryMgr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tool.cpp">
@@ -137,6 +150,13 @@
     <ClCompile Include="MiniView.cpp">
       <Filter>03.View\00.MiniView</Filter>
     </ClCompile>
+    <ClCompile Include="PreView.cpp">
+      <Filter>03.View\02.PreView</Filter>
+    </ClCompile>
+    <ClCompile Include="TileTool.cpp">
+      <Filter>04.Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectoryMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Tool.ico">

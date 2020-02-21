@@ -39,6 +39,7 @@ typedef struct tagTileInfo
 	D3DXVECTOR3 vSize;
 	BYTE byDrawID;
 	BYTE byOption;
+	wstring wsTexKey;
 }TILE_INFO,*PTILE_INFO;
 
 typedef struct tagFrame
@@ -55,3 +56,10 @@ typedef struct tagUnit
 	int iJobIndex;
 	int iItem;
 }UNIT_DATA;
+typedef struct tagPathInfo
+{
+	std::wstring wstrObjectKey;
+	std::wstring wstrStateKey;
+	std::wstring wstrRelative;
+	int iImgCount;
+}PATH_INFO;

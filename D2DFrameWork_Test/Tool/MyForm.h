@@ -1,7 +1,7 @@
 #pragma once
 
-
-
+#include "TileTool.h"
+#include "afxwin.h"
 // CMyForm Æû ºäÀÔ´Ï´Ù.
 //TODO: Formºä ¹öÆ°¸¸µéÂ÷·Ê
 class CMyForm : public CFormView
@@ -28,10 +28,29 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 
-
-	
 public:
 	virtual void OnInitialUpdate();
+	//afx_msg
+	afx_msg void OnBnClickedTileButton();
+	afx_msg void OnEnChangeTileNum();
+
+public:
+	TileTool		m_TileTool;
+
+public:
+	CDeviceMgr*		m_pDeviceMgr;
+	CTextureMgr*	m_pTextureMgr;
+
+public:
+	CListBox m_ListBox;
+	BYTE m_byDrawID;
+	map<CString, CString> m_mTilePath;
+	wstring m_Texname;
+
+
+
+	afx_msg void OnEnChangeTileOption();
+	afx_msg void OnLbnSelchangeList();
 };
 
 

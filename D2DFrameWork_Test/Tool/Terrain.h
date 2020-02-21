@@ -21,7 +21,7 @@ public:
 	virtual void Render() override;
 public:
 	void MiniView();
-	void TileChange(const D3DXVECTOR3& vPos, const BYTE& byDrawID, const BYTE& byOption = 0);
+	void TileChange(const D3DXVECTOR3& vPos, const BYTE& byDrawID, const BYTE& byOption = 0,const wstring &wsTexKey= L"TileSet1");
 private:
 	int	GetTileIndex(const D3DXVECTOR3& vPos);
 	bool IsPicking(const D3DXVECTOR3& vPos, int iIndex);

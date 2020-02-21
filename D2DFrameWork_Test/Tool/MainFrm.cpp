@@ -8,7 +8,7 @@
 #include "MyForm.h"
 #include "ToolView.h"
 #include "MiniView.h"
-
+#include "PreView.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -100,20 +100,27 @@ void CMainFrame::Dump(CDumpContext& dc) const
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
 	m_MainSplitter.CreateStatic(this, 1, 2);
-	m_MainSplitter.CreateView(0, 1, RUNTIME_CLASS(CToolView), CSize(WINCX, WINCY), pContext);
-	m_MainSplitter.SetColumnInfo(0, 300, 300);
+	m_MainSplitter.CreateView(0, 1, RUNTIME_CLASS(CToolView), CSize(WINCX, 900), pContext);
+	m_MainSplitter.SetColumnInfo(0,450, 450);
+	//m_MainSplitter.SetRowInfo(0, 300, 300);
 
 	
 	m_SecondSplitter.CreateStatic(&m_MainSplitter, 2, 1, WS_CHILD | WS_VISIBLE, m_MainSplitter.IdFromRowCol(0, 0));
 	m_SecondSplitter.CreateView(0, 0, RUNTIME_CLASS(CMiniView), CSize(300, 300), pContext);
+	m_SecondSplitter.SetColumnInfo(0, 400, 400);
 	m_SecondSplitter.CreateView(1, 0, RUNTIME_CLASS(CMyForm), CSize(300, 300), pContext);
-
-	//m_MainSplitter.CreateStatic(this, 1, 2);	
-
-	//m_MainSplitter.CreateView(0, 0, RUNTIME_CLASS(CMyForm), CSize(100, WINCY), pContext);
-	//m_MainSplitter.CreateView(0, 1, RUNTIME_CLASS(CToolView), CSize(WINCX, WINCY), pContext);
+	//m_SecondSplitter.CreateView(2, 0, RUNTIME_CLASS(CPreView), CSize(200, 300), pContext);
+	//m_SecondSplitter.SetRowInfo(2, 400, 400);
 
 
+	//TODO: 요기하는중!
+	//m_ThirdSplitter.CreateStatic(&m_SecondSplitter, 2, 1, WS_CHILD | WS_VISIBLE, m_SecondSplitter.IdFromRowCol(1, 0));
+	//m_ThirdSplitter.CreateView(0, 0, RUNTIME_CLASS(CMyForm), CSize(400, 400), pContext);
+	//m_ThirdSplitter.CreateView(1, 0, RUNTIME_CLASS(CPreView), CSize(300, 300), pContext);
+	//m_ThirdSplitter.SetRowInfo(0, 400, 400);
+	//m_ThirdSplitter.SetRowInfo(1, 300, 300);
 
+
+	//m_ThirdSplitter.CreateView(0,1,)
 	return TRUE;
 }
