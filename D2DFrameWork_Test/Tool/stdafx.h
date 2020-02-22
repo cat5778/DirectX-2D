@@ -66,7 +66,7 @@
 #include <map>
 #include <algorithm>
 #include <functional>
-
+#include <fstream>
 using namespace std;
 
 // DirectX

@@ -49,6 +49,15 @@
     <Filter Include="90.Managers\02.CDrectoryManger">
       <UniqueIdentifier>{1f8d98f5-53a1-4a54-b337-219a3d0e40f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Dialog\TileTool">
+      <UniqueIdentifier>{7f5dd4f8-4d9f-48b1-a419-7361e50c2c53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Dialog\ObjectTool">
+      <UniqueIdentifier>{1b1ef479-6804-4521-9297-8a9d472d543f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.GameObjects\Terrain">
+      <UniqueIdentifier>{31fd0360-8a92-4be0-a75d-a6b82a6c4273}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -90,9 +99,6 @@
     <ClInclude Include="GameObject.h">
       <Filter>05.GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Terrain.h">
-      <Filter>05.GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="MyForm.h">
       <Filter>03.View\01.FormView</Filter>
     </ClInclude>
@@ -103,9 +109,17 @@
       <Filter>03.View\02.PreView</Filter>
     </ClInclude>
     <ClInclude Include="TileTool.h">
-      <Filter>04.Dialog</Filter>
+      <Filter>04.Dialog\TileTool</Filter>
     </ClInclude>
-    <ClInclude Include="DirectoryMgr.h" />
+    <ClInclude Include="DirectoryMgr.h">
+      <Filter>90.Managers\02.CDrectoryManger</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTool.h">
+      <Filter>04.Dialog\ObjectTool</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>05.GameObjects\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tool.cpp">
@@ -141,9 +155,6 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>05.GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>05.GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="MyForm.cpp">
       <Filter>03.View\01.FormView</Filter>
     </ClCompile>
@@ -154,9 +165,17 @@
       <Filter>03.View\02.PreView</Filter>
     </ClCompile>
     <ClCompile Include="TileTool.cpp">
-      <Filter>04.Dialog</Filter>
+      <Filter>04.Dialog\TileTool</Filter>
     </ClCompile>
-    <ClCompile Include="DirectoryMgr.cpp" />
+    <ClCompile Include="DirectoryMgr.cpp">
+      <Filter>90.Managers\02.CDrectoryManger</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTool.cpp">
+      <Filter>04.Dialog\ObjectTool</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>05.GameObjects\Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Tool.ico">

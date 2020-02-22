@@ -63,3 +63,9 @@ typedef struct tagPathInfo
 	std::wstring wstrRelative;
 	int iImgCount;
 }PATH_INFO;
+typedef struct ObjectInfo
+{
+	std::wstring	wstrObjectName;
+	OBJECT_TYPE		eObjectType;
+	D3DXVECTOR3		vSpawnPos;
+}OBJ_INFO;
