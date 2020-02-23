@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TileTool.h"
+#include "ObjectTool.h"
 #include "afxwin.h"
 // CMyForm Æû ºäÀÔ´Ï´Ù.
 class CMyForm : public CFormView
@@ -31,12 +32,15 @@ public:
 	virtual void OnInitialUpdate();
 	//afx_msg
 	afx_msg void OnBnClickedTileButton();
-	afx_msg void OnEnChangeTileNum();
-	afx_msg void OnEnChangeTileOption();
+	afx_msg void OnBnClickedObjectTool();
 	afx_msg void OnLbnSelchangeList();
+	afx_msg void OnEnChangeTileOption();
+	afx_msg void OnEnChangeTileNum();
 
-public:
+public: // Tool Class
 	TileTool		m_TileTool;
+	ObjectTool		m_ObjTool;
+
 
 public:
 	CDeviceMgr*		m_pDeviceMgr;
@@ -45,9 +49,11 @@ public:
 public:
 	CListBox m_ListBox;
 	CStatic m_Preview;
+	CComboBox m_ComboBox;
 
 
 public:
+	map<CString, OBJECT_TYPE>m_mObjects;
 	map<CString, CString> m_mTilePath;
 	wstring m_Texname;
 	BYTE m_byDrawID;
@@ -55,7 +61,7 @@ public:
 
 
 
-	CStatic m_picture3;
+	afx_msg void OnCbnSelchange();
 };
 
 

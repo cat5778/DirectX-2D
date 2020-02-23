@@ -204,6 +204,7 @@
     <ClInclude Include="MiniView.h" />
     <ClInclude Include="MultiTexture.h" />
     <ClInclude Include="MyForm.h" />
+    <ClInclude Include="ObjectTool.h" />
     <ClInclude Include="PreView.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SingleTexture.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="MiniView.cpp" />
     <ClCompile Include="MultiTexture.cpp" />
     <ClCompile Include="MyForm.cpp" />
+    <ClCompile Include="ObjectTool.cpp" />
     <ClCompile Include="PreView.cpp" />
     <ClCompile Include="SingleTexture.cpp" />
     <ClCompile Include="stdafx.cpp">

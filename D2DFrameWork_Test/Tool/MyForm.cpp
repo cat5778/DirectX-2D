@@ -28,15 +28,17 @@ void CMyForm::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT1, m_byDrawID);
 	DDX_Control(pDX, IDC_LIST1, m_ListBox);
 	DDX_Text(pDX, IDC_EDIT3, m_byOption);
-	
-	DDX_Control(pDX, IDC_PICTURE4, m_Preview);
+	DDX_Control(pDX, IDC_Picture, m_Preview);
+	DDX_Control(pDX, IDC_COMBO1, m_ComboBox);
 }
 
 BEGIN_MESSAGE_MAP(CMyForm, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON2, &CMyForm::OnBnClickedTileButton)
+	ON_BN_CLICKED(IDC_BUTTON3, &CMyForm::OnBnClickedObjectTool)
+	ON_LBN_SELCHANGE(IDC_LIST1, &CMyForm::OnLbnSelchangeList)
 	ON_EN_CHANGE(IDC_EDIT1, &CMyForm::OnEnChangeTileNum)
 	ON_EN_CHANGE(IDC_EDIT3, &CMyForm::OnEnChangeTileOption)
-	ON_LBN_SELCHANGE(IDC_LIST1, &CMyForm::OnLbnSelchangeList)
+	ON_CBN_SELCHANGE(IDC_COMBO1, &CMyForm::OnCbnSelchange)
 END_MESSAGE_MAP()
 
 
@@ -63,8 +65,12 @@ void CMyForm::Dump(CDumpContext& dc) const
 void CMyForm::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
+	CString csObjectType[7] = { L"Tile",L"Building",L"Tree",L"Grass",L"Monster",L"NPC",L"Player" };
+	for (int i = 0; i < 7; i++)
+		m_ComboBox.AddString(csObjectType[i]);
 
 	m_TileTool.Create(IDD_TILETOOL);
+	m_ObjTool.Create(IDD_OBJECTTOOL);
 
 }
 
@@ -72,7 +78,6 @@ void CMyForm::OnInitialUpdate()
 
 void CMyForm::OnBnClickedTileButton()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
 	m_TileTool.ShowWindow(SW_SHOW);
 
@@ -105,31 +110,60 @@ void CMyForm::OnLbnSelchangeList()
 	m_ListBox.GetText(m_ListBox.GetCurSel(), csItemName);
 	m_Texname = csItemName.GetString();
 
-	//m_pTextureMgr->Getmap();
+
 	// 픽처 컨트롤에 타일 미리보기 출력.
 	const TEX_INFO* pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(m_Texname);
 	NULL_CHECK(pTexInfo);
 
-	//float fCenterX = pTexInfo->tImgInfo.Width * 0.5f;
-	//float fCenterY = pTexInfo->tImgInfo.Height * 0.5f;
+	float fCenterX = 0;
+	float fCenterY = 0;
 
 	D3DXMATRIX matScale, matTrans, matWorld;
-	D3DXMatrixScaling(&matScale, 4,3, 0.f);
-	D3DXMatrixTranslation(&matTrans, 1, 1, 0.f);
+	D3DXMatrixScaling(&matScale, (float)WINCX / pTexInfo->tImgInfo.Width, (float)WINCY / pTexInfo->tImgInfo.Height, 0.f);
+	D3DXMatrixTranslation(&matTrans, 0, 0, 0.f);
 
 	matWorld = matScale * matTrans;
 
 	CDeviceMgr::GetInstance()->GetSprite()->SetTransform(&matWorld);
 	Invalidate(FALSE);
-	//TODO: 현재요기중
+
+
 	CDeviceMgr::GetInstance()->Render_Begin();
 
-	CDeviceMgr::GetInstance()->GetSprite()->Draw(pTexInfo->pTexture, nullptr, &D3DXVECTOR3(0, 0, 0.f),
+	CDeviceMgr::GetInstance()->GetSprite()->Draw(pTexInfo->pTexture, nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f),
 		nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
 
 	CDeviceMgr::GetInstance()->Render_End(m_Preview.m_hWnd);
 
 
+
+
+}
+
+
+void CMyForm::OnBnClickedObjectTool()
+{
+	m_ObjTool.ShowWindow(SW_SHOW);
+
+
+}
+
+
+void CMyForm::OnCbnSelchange()
+{
+	CString cs;
+	m_ComboBox.GetLBText(m_ComboBox.GetCurSel(), cs);
+	//wcout << cs.GetString() << endl;
+	for (int i = 0; i < m_ListBox.GetCount(); i++)
+		m_ListBox.DeleteString(i);
+	//TODO: 요기하는중 현재 콤보박스에서 선택한 오브젝트들만 보이게끔 하는중!!! 
+	for (auto object : m_mObjects)
+	{
+		
+		if (cs.Compare(object.first)==0)
+			m_ListBox.AddString(object.first);
+		
+	}
 
 
 }
