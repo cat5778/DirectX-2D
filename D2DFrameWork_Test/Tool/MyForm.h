@@ -55,6 +55,7 @@ public:
 
 
 
+	CStatic m_picture3;
 };
 
 

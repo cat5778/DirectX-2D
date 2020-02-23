@@ -14,7 +14,6 @@ public:
 		const wstring& wstrObjectKey,
 		const wstring& wstrStateKey = L"",
 		const WORD& wIndex = 0) const;
-
 public:
 	HRESULT LoadTexture(
 		LPDIRECT3DDEVICE9 pGrahicDev,
@@ -24,10 +23,11 @@ public:
 		const wstring& wstrStateKey = L"", /* 상태 키 */
 		const WORD& wCnt = 0 /* 텍스처 카운트 */);
 
+	map<wstring, CTexture*> Getmap() { m_mapTexture; }
 private:
 	void Release();
 
-private:
 	map<wstring, CTexture*>	m_mapTexture;
+private:
 };
 
