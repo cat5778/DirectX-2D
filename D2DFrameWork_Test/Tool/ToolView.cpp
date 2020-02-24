@@ -170,6 +170,10 @@ void CToolView::OnInitialUpdate()
 	LPDIRECT3DDEVICE9 pGraphicDev = m_pDeviceMgr->GetDevice();
 	NULL_CHECK_MSG(pGraphicDev, L"pGraphicDev is null");
 	
+	hr = m_pTextureMgr->LoadTextureFromPathInfo(pGraphicDev, L"../Data/TilePath.txt");
+	//FAILED_CHECK_MSG_RETURN(hr, L"LoadTextureFromPathInfo Failed", E_FAIL);
+
+
 	hr = m_pTextureMgr->LoadTexture(pGraphicDev, TEXTURE_SINGLE,
 		L"../Image/Tile/Tileset_Fields_bg_tileset.png", L"TileSet1");
 	FAILED_CHECK_MSG(hr, L"Tile Texture Load Failed");
@@ -182,14 +186,14 @@ void CToolView::OnInitialUpdate()
 
 void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	cout << "X=" << point.x << " Y=" << point.y << endl;
+	//cout << "X=" << point.x << " Y=" << point.y << endl;
 	D3DXVECTOR3 vPoint =
 	{
 		(float)point.x + CScrollView::GetScrollPos(0),
 		(float)point.y + CScrollView::GetScrollPos(1),
 		0.f
 	};
-	cout << "X=" << vPoint.x << " Y=" << vPoint.y << endl;
+	//cout << "X=" << vPoint.x << " Y=" << vPoint.y << endl;
 
 	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	NULL_CHECK(pFrameWnd);
@@ -197,8 +201,8 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
 	NULL_CHECK(pFormView);
 
-	CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byDrawID, pFormView->m_byOption, pFormView->m_Texname);
-	
+	CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byDrawID, pFormView->m_byOption, pFormView->m_TilePath.first.GetString());
+	//wcout <<L"Toolview= "<< pFormView->m_TilePath.first.GetString() << endl;
 
 	// 화면 갱신 (WM_PAINT 발생)
 	Invalidate(FALSE);
@@ -226,7 +230,7 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 
 
 		//m_pTerrain->TileChange(vPoint, pFormView->m_MapTool.m_iDrawID);
-		CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byDrawID, pFormView->m_byOption, pFormView->m_Texname);
+		CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byDrawID, pFormView->m_byOption, pFormView->m_TilePath.first.GetString());
 
 		// 화면 갱신 (WM_PAINT 발생)
 		Invalidate(FALSE);

@@ -29,7 +29,7 @@ HRESULT CTerrain::Initialize()
 			tile->vSize = vSize;
 			tile->byDrawID = 0;
 			tile->byOption = 0;
-			tile->wsTexKey = L"TileSet1";
+			tile->wsTexKey = L"Tile";
 			m_vecTile.push_back(tile);
 		}
 	}
@@ -73,7 +73,7 @@ void CTerrain::Render()
 
 	for (size_t i = 0; i < m_vecTile.size(); ++i)
 	{
-		pTexInfo = m_pTextureMgr->GetTexInfo(m_vecTile[i]->wsTexKey);
+		pTexInfo = m_pTextureMgr->GetTexInfo(L"Tile", m_vecTile[i]->wsTexKey);
 		NULL_CHECK_CONTINUE(pTexInfo);
 
 		D3DXMatrixScaling(&matScale,
@@ -149,7 +149,7 @@ void CTerrain::TileChange(const D3DXVECTOR3 & vPos, const BYTE & byDrawID, const
 	m_vecTile[iIndex]->byDrawID = byDrawID;
 	m_vecTile[iIndex]->byOption = byOption;
 	m_vecTile[iIndex]->wsTexKey=wsTexKey;
-	wcout << m_vecTile[iIndex]->wsTexKey << endl;
+	wcout <<L"Terrain TileChange ="<< m_vecTile[iIndex]->wsTexKey << endl;
 
 }
 int CTerrain::GetTileIndex(const D3DXVECTOR3& vPos)

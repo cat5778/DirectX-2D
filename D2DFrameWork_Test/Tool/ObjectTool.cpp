@@ -16,6 +16,7 @@ IMPLEMENT_DYNAMIC(ObjectTool, CDialog)
 ObjectTool::ObjectTool(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD_OBJECTTOOL, pParent)
 	, m_csObjName(_T(""))
+	, m_bIsAni(false)
 {
 
 }
@@ -38,6 +39,8 @@ BEGIN_MESSAGE_MAP(ObjectTool, CDialog)
 	ON_EN_CHANGE(IDC_EDIT1, &ObjectTool::OnEnChangeObejctName)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &ObjectTool::OnCbnSelchangeObject)
 	ON_BN_CLICKED(IDOK, &ObjectTool::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_RADIO1, &ObjectTool::OnBnClickedAniOn)
+	ON_BN_CLICKED(IDC_RADIO2, &ObjectTool::OnBnClickedAniOff)
 END_MESSAGE_MAP()
 
 
@@ -61,7 +64,7 @@ void ObjectTool::OnBnClickedAddOBject()
 
 	m_mObjList.insert(make_pair(m_csObjName,m_eObjType));
 	wstring cs = m_csObjName;
-	wcout << cs << m_eObjType << endl;
+	//wcout << cs << m_eObjType << endl;
 	m_ListBox.AddString(m_csObjName);
 }	
 
@@ -97,6 +100,10 @@ void ObjectTool::ConvertionCtoE(CString csobjType)
 		m_eObjType = OBJECT_MONSTER;
 	else if (csobjType.Compare(L"Player") == 0)
 		m_eObjType = OBJECT_PLAYER;
+	else if (csobjType.Compare(L"Trap") == 0)
+		m_eObjType = OBJECT_TRAP;
+	else if (csobjType.Compare(L"Obstacle") == 0)
+		m_eObjType = OBJECT_OBSTACLE;
 
 
 }
@@ -152,8 +159,8 @@ void ObjectTool::WriteData()
 BOOL ObjectTool::OnInitDialog()
 {
 	CDialog::OnInitDialog();
-	CString csObjectType[6]= { L"Building",L"Tree",L"Grass",L"Monster",L"NPC",L"Player" };
-	for(int i=0;i<6;i++)
+	CString csObjectType[8]= { L"Building",L"Tree",L"Grass",L"Monster",L"NPC",L"Player",L"Trap",L"Obstacle" };
+	for(int i=0;i<8;i++)
 		m_CBObjectType.AddString(csObjectType[i]);
 
 	ReadData();
@@ -173,7 +180,17 @@ void ObjectTool::OnBnClickedOk()
 	NULL_CHECK(pFormView);
 	pFormView->m_mObjects = m_mObjList;
 
-
-
 	CDialog::OnOK();
+}
+
+
+void ObjectTool::OnBnClickedAniOn()
+{
+	m_bIsAni = true;
+}
+
+
+void ObjectTool::OnBnClickedAniOff()
+{
+	m_bIsAni = false;
 }
