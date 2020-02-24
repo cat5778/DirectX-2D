@@ -153,6 +153,7 @@ HRESULT CMyForm::ReadData(wstring wstrFilePath)
 	}
 
 	fin.close();
+	return E_NOTIMPL;
 }
 
 
