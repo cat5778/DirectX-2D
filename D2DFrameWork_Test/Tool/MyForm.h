@@ -2,6 +2,7 @@
 
 #include "TileTool.h"
 #include "ObjectTool.h"
+#include "PathTool.h"
 #include "afxwin.h"
 // CMyForm Æû ºäÀÔ´Ï´Ù.
 class CMyForm : public CFormView
@@ -36,21 +37,25 @@ public:
 	afx_msg void OnLbnSelchangeList();
 	afx_msg void OnEnChangeTileOption();
 	afx_msg void OnEnChangeTileNum();
+	afx_msg void OnCbnSelchange();
+private:
+	void ConvertionCtoE(CString csobjType);
 
+	CString ConvertionEtoC(OBJECT_TYPE eObjectType);
+	HRESULT ReadData(wstring wstrFilePath);
 public: // Tool Class
 	TileTool		m_TileTool;
 	ObjectTool		m_ObjTool;
-
+	CPathTool		m_PathTool;
 
 public:
 	CDeviceMgr*		m_pDeviceMgr;
 	CTextureMgr*	m_pTextureMgr;
-
 public:
 	CListBox m_ListBox;
 	CStatic m_Preview;
 	CComboBox m_ComboBox;
-
+	int m_iOldCount;
 
 public:
 	map<CString, OBJECT_TYPE>m_mObjects;
@@ -58,10 +63,10 @@ public:
 	wstring m_Texname;
 	BYTE m_byDrawID;
 	BYTE m_byOption;
+	OBJECT_TYPE m_eObjType;
+	pair<CString, CString> m_TilePath;
 
-
-
-	afx_msg void OnCbnSelchange();
+	afx_msg void OnBnClickedObject();
 };
 
 

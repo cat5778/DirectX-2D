@@ -66,6 +66,10 @@ typedef struct tagPathInfo
 typedef struct ObjectInfo
 {
 	std::wstring	wstrObjectName;
+	std::wstring	wstrObjectKey;
+	std::wstring	wstrStateKey;
+	bool			IsAni;
 	OBJECT_TYPE		eObjectType;
 	D3DXVECTOR3		vSpawnPos;
+	
 }OBJ_INFO;

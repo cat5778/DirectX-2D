@@ -4,7 +4,6 @@
 #include "stdafx.h"
 #include "Tool.h"
 #include "MyForm.h"
-
 // CMyForm
 
 IMPLEMENT_DYNCREATE(CMyForm, CFormView)
@@ -13,7 +12,8 @@ CMyForm::CMyForm()
 	: CFormView(IDD_MYFORM),
 	m_byDrawID(0),
 	m_Texname(L"TileSet1"),
-	m_byOption(0)
+	m_byOption(0),
+	m_iOldCount(0)
 {
 
 }
@@ -39,6 +39,7 @@ BEGIN_MESSAGE_MAP(CMyForm, CFormView)
 	ON_EN_CHANGE(IDC_EDIT1, &CMyForm::OnEnChangeTileNum)
 	ON_EN_CHANGE(IDC_EDIT3, &CMyForm::OnEnChangeTileOption)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CMyForm::OnCbnSelchange)
+	ON_BN_CLICKED(IDC_BUTTON4, &CMyForm::OnBnClickedObject)
 END_MESSAGE_MAP()
 
 
@@ -68,9 +69,11 @@ void CMyForm::OnInitialUpdate()
 	CString csObjectType[7] = { L"Tile",L"Building",L"Tree",L"Grass",L"Monster",L"NPC",L"Player" };
 	for (int i = 0; i < 7; i++)
 		m_ComboBox.AddString(csObjectType[i]);
-
+	ReadData(L"../Data/TilePath.txt");
+	//CTextureMgr::GetInstance()->
 	m_TileTool.Create(IDD_TILETOOL);
 	m_ObjTool.Create(IDD_OBJECTTOOL);
+	m_PathTool.Create(IDD_PATHTOOL);
 
 }
 
@@ -93,6 +96,65 @@ void CMyForm::OnEnChangeTileNum()
 
 }
 
+CString CMyForm::ConvertionEtoC(OBJECT_TYPE eObjectType)
+{
+	switch (eObjectType)
+	{
+	case OBJECT_BUILDING:
+		return L"Building";
+	case OBJECT_MONSTER:
+		return L"Monster";
+	case OBJECT_NPC:
+		return L"NPC";
+	case OBJECT_GRASS:
+		return L"Grass";
+	case OBJECT_TREE:
+		return L"Tree";
+	case OBJECT_PLAYER:
+		return L"Player";
+	default:
+		return L"";
+	}
+}
+
+HRESULT CMyForm::ReadData(wstring wstrFilePath)
+{
+	wifstream fin;
+
+	fin.open(wstrFilePath);
+
+	if (fin.fail())
+		return E_FAIL;
+
+	TCHAR szObjectKey[MAX_STR] = L"";
+	TCHAR szStateKey[MAX_STR] = L"";
+	TCHAR szCount[MAX_STR] = L"";
+	TCHAR szRelative[MAX_STR] = L"";
+
+	while (true)
+	{
+		fin.getline(szObjectKey, MAX_STR, '|');
+		fin.getline(szStateKey, MAX_STR, '|');
+		fin.getline(szCount, MAX_STR, '|');
+		fin.getline(szRelative, MAX_STR);
+
+		if (fin.eof())
+			break;
+		ConvertionCtoE(szObjectKey);
+		switch (m_eObjType)
+		{
+		case OBJECT_TERRAIN:
+			m_mTilePath.insert(make_pair(szStateKey,szObjectKey));
+			break;
+		default:
+			m_mObjects.insert(make_pair(szObjectKey, m_eObjType));
+			break;
+		}
+	}
+
+	fin.close();
+}
+
 
 void CMyForm::OnEnChangeTileOption()
 {
@@ -105,16 +167,19 @@ void CMyForm::OnEnChangeTileOption()
 void CMyForm::OnLbnSelchangeList()
 {
 	CString csItemName;
-	
+
 	//cout << csItemName << endl;
+
+
 	m_ListBox.GetText(m_ListBox.GetCurSel(), csItemName);
-	m_Texname = csItemName.GetString();
-
-
 	// 픽처 컨트롤에 타일 미리보기 출력.
-	const TEX_INFO* pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(m_Texname);
-	NULL_CHECK(pTexInfo);
+	
+	m_TilePath = make_pair(m_mTilePath.find(csItemName)->first.GetString(), m_mTilePath.find(csItemName)->second.GetString());
+	//wcout << m_TilePath.first.GetString() << endl;
 
+	//wcout << m_TilePath.second.GetString() << endl;
+	const TEX_INFO* pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(m_TilePath.second.GetString(), m_TilePath.first.GetString());
+	NULL_CHECK(pTexInfo);
 	float fCenterX = 0;
 	float fCenterY = 0;
 
@@ -151,19 +216,55 @@ void CMyForm::OnBnClickedObjectTool()
 
 void CMyForm::OnCbnSelchange()
 {
+	m_ListBox.ResetContent();
 	CString cs;
 	m_ComboBox.GetLBText(m_ComboBox.GetCurSel(), cs);
-	//wcout << cs.GetString() << endl;
-	for (int i = 0; i < m_ListBox.GetCount(); i++)
-		m_ListBox.DeleteString(i);
-	//TODO: 요기하는중 현재 콤보박스에서 선택한 오브젝트들만 보이게끔 하는중!!! 
+
+	if (cs.Compare(L"Tile") == 0)
+	{
+		for (auto path : m_mTilePath)
+			m_ListBox.AddString(path.first);
+
+	}
 	for (auto object : m_mObjects)
 	{
-		
-		if (cs.Compare(object.first)==0)
+		if (cs.Compare(ConvertionEtoC(object.second)) == 0)
+		{
+			//wcout << object.first.GetString() << endl;
 			m_ListBox.AddString(object.first);
+			m_iOldCount++;
+		}
 		
 	}
+	wcout << cs.GetString() << endl;
+	m_iOldCount = 0;
 
+}
+
+void CMyForm::ConvertionCtoE(CString csobjType)
+{
+	if (csobjType.Compare(L"Building") == 0)
+		m_eObjType = OBJECT_BUILDING;
+	else if (csobjType.Compare(L"Tree") == 0)
+		m_eObjType = OBJECT_TREE;
+	else if (csobjType.Compare(L"Grass") == 0)
+		m_eObjType = OBJECT_GRASS;
+	else if (csobjType.Compare(L"NPC") == 0)
+		m_eObjType = OBJECT_NPC;
+	else if (csobjType.Compare(L"Monster") == 0)
+		m_eObjType = OBJECT_MONSTER;
+	else if (csobjType.Compare(L"Player") == 0)
+		m_eObjType = OBJECT_PLAYER;
+	else if (csobjType.Compare(L"Trap") == 0)
+		m_eObjType = OBJECT_TRAP;
+	else if (csobjType.Compare(L"Obstacle") == 0)
+		m_eObjType = OBJECT_OBSTACLE;
+
+}
+
+
+void CMyForm::OnBnClickedObject()
+{
+	m_PathTool.ShowWindow(SW_SHOW);
 
 }

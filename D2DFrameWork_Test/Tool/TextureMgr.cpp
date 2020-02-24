@@ -28,6 +28,46 @@ const TEX_INFO* CTextureMgr::GetTexInfo(
 	return iter_find->second->GetTexInfo(wstrStateKey, wIndex);
 }
 
+HRESULT CTextureMgr::LoadTextureFromPathInfo(LPDIRECT3DDEVICE9 pGrahicDev, const wstring & wstrFilePath)
+{
+	wifstream fin;
+
+	fin.open(wstrFilePath);
+
+	if (fin.fail())
+		return E_FAIL;
+
+	TCHAR szObjectKey[MAX_STR] = L"";
+	TCHAR szStateKey[MAX_STR] = L"";
+	TCHAR szCount[MAX_STR] = L"";
+	TCHAR szRelative[MAX_STR] = L"";
+
+	while (true)
+	{
+		fin.getline(szObjectKey, MAX_STR, '|');
+		fin.getline(szStateKey, MAX_STR, '|');
+		fin.getline(szCount, MAX_STR, '|');
+		fin.getline(szRelative, MAX_STR);
+
+		if (fin.eof())
+			break;
+
+		HRESULT hr = LoadTexture(pGrahicDev, TEXTURE_MULTI,
+			szRelative, szObjectKey, szStateKey, _ttoi(szCount));
+
+		if (FAILED(hr))
+		{
+			fin.close();
+			return E_FAIL;
+		}
+	}
+
+	fin.close();
+
+	return S_OK;
+
+}
+
 HRESULT CTextureMgr::LoadTexture(
 	LPDIRECT3DDEVICE9 pGrahicDev,
 	TEXTURE_TYPE eTextureType, 

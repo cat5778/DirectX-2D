@@ -16,6 +16,10 @@ public:
 		const WORD& wIndex = 0) const;
 
 public:
+	HRESULT LoadTextureFromPathInfo(
+		LPDIRECT3DDEVICE9 pGrahicDev,
+		const wstring& wstrFilePath);
+
 	HRESULT LoadTexture(
 		LPDIRECT3DDEVICE9 pGrahicDev,
 		TEXTURE_TYPE eTextureType,		
@@ -29,5 +33,7 @@ private:
 
 private:
 	map<wstring, CTexture*>	m_mapTexture;
+
+
 };
 

@@ -58,6 +58,9 @@
     <Filter Include="05.GameObjects\Terrain">
       <UniqueIdentifier>{31fd0360-8a92-4be0-a75d-a6b82a6c4273}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Dialog\PathTool">
+      <UniqueIdentifier>{5822356b-ce0c-4988-88be-895a93fbdb8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Tool.h">
@@ -120,6 +123,9 @@
     <ClInclude Include="Terrain.h">
       <Filter>05.GameObjects\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="PathTool.h">
+      <Filter>04.Dialog\PathTool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Tool.cpp">
@@ -175,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
       <Filter>05.GameObjects\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="PathTool.cpp">
+      <Filter>04.Dialog\PathTool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
