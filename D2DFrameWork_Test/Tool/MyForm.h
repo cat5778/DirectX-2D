@@ -51,6 +51,9 @@ public:
 	CStatic m_Preview;
 	CComboBox m_ComboBox;
 
+public:
+	CString ConvertionCtoE(OBJECT_TYPE _objectType);
+
 
 public:
 	map<CString, OBJECT_TYPE>m_mObjects;

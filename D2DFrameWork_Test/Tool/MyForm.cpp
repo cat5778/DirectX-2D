@@ -149,6 +149,36 @@ void CMyForm::OnBnClickedObjectTool()
 }
 
 
+CString CMyForm::ConvertionCtoE(OBJECT_TYPE _objectType)
+{
+	switch (_objectType)
+	{
+	case OBJECT_BUILDING:
+		return  L"Building";
+		break;
+	case OBJECT_MONSTER:
+		return  L"Monster";
+		break;
+	case OBJECT_NPC:
+		return L"NPC";
+		break;
+	case OBJECT_GRASS:
+		return  L"Grass";
+		break;
+	case OBJECT_TREE:
+		return L"Tree";
+		break;
+	case OBJECT_PLAYER:
+		return L"Player";
+		break;
+	default:
+		return L"";
+
+		break;
+	}
+
+}
+
 void CMyForm::OnCbnSelchange()
 {
 	CString cs;
@@ -159,8 +189,7 @@ void CMyForm::OnCbnSelchange()
 	//TODO: 요기하는중 현재 콤보박스에서 선택한 오브젝트들만 보이게끔 하는중!!! 
 	for (auto object : m_mObjects)
 	{
-		
-		if (cs.Compare(object.first)==0)
+		if(cs.Compare(ConvertionCtoE(object.second))==0)
 			m_ListBox.AddString(object.first);
 		
 	}
