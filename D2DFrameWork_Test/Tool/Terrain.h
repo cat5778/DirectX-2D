@@ -27,12 +27,11 @@ public:
 private:
 	int	GetTileIndex(const D3DXVECTOR3& vPos);
 	bool IsPicking(const D3DXVECTOR3& vPos, int iIndex);
-	POINT TileDrawConverstion(int _drawID);
+	POINT TileDrawConverstion(int _drawID, int XCount, int YCount);
 
 public:
 	vector<TILE_INFO*>	m_vecTile;
 	CToolView*			m_pView;
-
 
 };
 

@@ -85,7 +85,7 @@ void CTerrain::Render()
 			m_vecTile[i]->vPos.y  - m_pView->GetScrollPos(1),
 			m_vecTile[i]->vPos.z);
 		
-		POINT tID=TileDrawConverstion(m_vecTile[i]->byDrawID);
+		POINT tID=TileDrawConverstion(m_vecTile[i]->byDrawID, pTexInfo->tImgInfo.Width/TILECX, pTexInfo->tImgInfo.Height/TILECY);
 		fCenterX = TILECX*0.5f;
 		fCenterY = TILECY*0.5f;
 		RECT rt = { TILECX*tID.x , TILECY*tID.y , TILECX*tID.x+ TILECX , TILECY*tID.y+ TILECY };
@@ -128,7 +128,7 @@ void CTerrain::MiniView()
 			m_vecTile[i]->vPos.y*0.25f - m_pView->GetScrollPos(1),
 			m_vecTile[i]->vPos.z);
 
-		POINT tID = TileDrawConverstion(m_vecTile[i]->byDrawID);
+		POINT tID = TileDrawConverstion(m_vecTile[i]->byDrawID,pTexInfo->tImgInfo.Width / TILECX, pTexInfo->tImgInfo.Height / TILECY);
 		fCenterX = TILECX*0.5f;
 		fCenterY = TILECY*0.5f;
 		RECT rt = { TILECX*tID.x , TILECY*tID.y , TILECX*tID.x + TILECX , TILECY*tID.y + TILECY };
@@ -208,12 +208,14 @@ bool CTerrain::IsPicking(const D3DXVECTOR3 & vPos, int iIndex)
 	return true;
 }
 
-POINT CTerrain::TileDrawConverstion(int _drawID)
+POINT CTerrain::TileDrawConverstion(int _drawID, int XCount, int YCount)
 {
 	int id = _drawID;
 	POINT tileID;
-	tileID.y = id / 4;
-	tileID.x = id % 4;
+	tileID.x = id % XCount;
+	tileID.y = id / XCount;
+	cout << "tileid x=" << tileID.x <<" "<< XCount << endl;
+	cout << "tileid y=" << tileID.y <<" "<< YCount<< endl;
 	return tileID;
 }
 

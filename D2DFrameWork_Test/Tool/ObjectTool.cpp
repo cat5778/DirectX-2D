@@ -161,6 +161,7 @@ void ObjectTool::ReadData()
 			continue;
 		m_ListBox.AddString(object.first);
 	}
+	//return	;
 }
 
 void ObjectTool::WriteData()
