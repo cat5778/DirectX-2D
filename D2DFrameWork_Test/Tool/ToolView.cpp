@@ -170,7 +170,7 @@ void CToolView::OnInitialUpdate()
 	LPDIRECT3DDEVICE9 pGraphicDev = m_pDeviceMgr->GetDevice();
 	NULL_CHECK_MSG(pGraphicDev, L"pGraphicDev is null");
 	
-	hr = m_pTextureMgr->LoadTextureFromPathInfo(pGraphicDev, L"../Data/TilePath.txt");
+	hr = m_pTextureMgr->LoadTextureFromPathInfo(pGraphicDev, L"../Data/PathInfo.txt");
 	//FAILED_CHECK_MSG_RETURN(hr, L"LoadTextureFromPathInfo Failed", E_FAIL);
 
 

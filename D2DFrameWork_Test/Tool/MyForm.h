@@ -43,6 +43,7 @@ private:
 
 	CString ConvertionEtoC(OBJECT_TYPE eObjectType);
 	HRESULT ReadData(wstring wstrFilePath);
+
 public: // Tool Class
 	TileTool		m_TileTool;
 	ObjectTool		m_ObjTool;
@@ -58,7 +59,7 @@ public:
 	int m_iOldCount;
 
 public:
-	map<CString, OBJECT_TYPE>m_mObjects;
+	map<CString, OBJECT_TYPE> m_ObjectPath;
 	map<CString, CString> m_mTilePath;
 	wstring m_Texname;
 	BYTE m_byDrawID;

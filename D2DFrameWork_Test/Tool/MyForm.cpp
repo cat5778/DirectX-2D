@@ -66,10 +66,10 @@ void CMyForm::Dump(CDumpContext& dc) const
 void CMyForm::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
-	CString csObjectType[7] = { L"Tile",L"Building",L"Tree",L"Grass",L"Monster",L"NPC",L"Player" };
-	for (int i = 0; i < 7; i++)
+	CString csObjectType[8] = { L"Tile",L"Building",L"Tree",L"Grass",L"Monster",L"NPC",L"Player",L"Obstacle" };
+	for (int i = 0; i < 8; i++)
 		m_ComboBox.AddString(csObjectType[i]);
-	ReadData(L"../Data/TilePath.txt");
+	ReadData(L"../Data/PathInfo.txt");
 	//CTextureMgr::GetInstance()->
 	m_TileTool.Create(IDD_TILETOOL);
 	m_ObjTool.Create(IDD_OBJECTTOOL);
@@ -143,11 +143,14 @@ HRESULT CMyForm::ReadData(wstring wstrFilePath)
 		ConvertionCtoE(szObjectKey);
 		switch (m_eObjType)
 		{
+		case OBJECT_OBSTACLE:
+			m_ObjectPath.insert(make_pair(szStateKey, m_eObjType));
+			break;
+			//case object_
 		case OBJECT_TERRAIN:
 			m_mTilePath.insert(make_pair(szStateKey,szObjectKey));
 			break;
 		default:
-			m_mObjects.insert(make_pair(szObjectKey, m_eObjType));
 			break;
 		}
 	}
@@ -178,6 +181,7 @@ void CMyForm::OnLbnSelchangeList()
 	//wcout << m_TilePath.first.GetString() << endl;
 
 	//wcout << m_TilePath.second.GetString() << endl;
+	
 	const TEX_INFO* pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(m_TilePath.second.GetString(), m_TilePath.first.GetString());
 	NULL_CHECK(pTexInfo);
 	float fCenterX = 0;
@@ -226,7 +230,7 @@ void CMyForm::OnCbnSelchange()
 			m_ListBox.AddString(path.first);
 
 	}
-	for (auto object : m_mObjects)
+	for (auto object : m_ObjectPath)
 	{
 		if (cs.Compare(ConvertionEtoC(object.second)) == 0)
 		{
@@ -236,7 +240,7 @@ void CMyForm::OnCbnSelchange()
 		}
 		
 	}
-	wcout << cs.GetString() << endl;
+	//wcout << cs.GetString() << endl;
 	m_iOldCount = 0;
 
 }

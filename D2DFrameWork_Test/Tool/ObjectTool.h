@@ -33,6 +33,7 @@ public:
 	afx_msg void OnBnClickedAniOff();
 
 private:
+	CString ConvertionEtoC(OBJECT_TYPE eObjectType);
 	void ConvertionCtoE(CString csobjType);
 	void ReadData();
 	void WriteData();
@@ -43,11 +44,16 @@ private	:
 	CComboBox	m_CBObjectType;
 	CString		m_csObjName;
 	CListBox	m_ListBox;
+	CListBox	m_ImageBox;
+	CStatic		m_PreView;
+
 
 public:
+	map<CString, OBJECT_TYPE>	m_ImagePath;
 	map<CString, OBJECT_TYPE>	m_mObjList;
+	pair<CString, OBJECT_TYPE>  m_Obj;
 	OBJECT_TYPE					m_eObjType;
 	bool						m_bIsAni;
 
-
+	afx_msg void OnLbnSelchangeImageList();
 };

@@ -5,9 +5,10 @@
 #include "MainFrm.h"
 #include "MyForm.h"
 #include "Tool.h"
-
 #include "ObjectTool.h"
 #include "afxdialogex.h"
+
+
 
 // ObjectTool 대화 상자입니다.
 
@@ -31,6 +32,8 @@ void ObjectTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT1, m_csObjName);
 	DDX_Control(pDX, IDC_LIST1, m_ListBox);
 	DDX_Control(pDX, IDC_COMBO1, m_CBObjectType);
+	DDX_Control(pDX, IDC_LIST2, m_ImageBox);
+	DDX_Control(pDX, IDC_Preview2, m_PreView);
 }
 
 BEGIN_MESSAGE_MAP(ObjectTool, CDialog)
@@ -41,6 +44,7 @@ BEGIN_MESSAGE_MAP(ObjectTool, CDialog)
 	ON_BN_CLICKED(IDOK, &ObjectTool::OnBnClickedOk)
 	ON_BN_CLICKED(IDC_RADIO1, &ObjectTool::OnBnClickedAniOn)
 	ON_BN_CLICKED(IDC_RADIO2, &ObjectTool::OnBnClickedAniOff)
+	ON_LBN_SELCHANGE(IDC_LIST2, &ObjectTool::OnLbnSelchangeImageList)
 END_MESSAGE_MAP()
 
 
@@ -57,7 +61,7 @@ void ObjectTool::OnEnChangeObejctName()
 }
 
 void ObjectTool::OnBnClickedAddOBject()
-{	
+{
 	CString csTemp;
 	m_CBObjectType.GetLBText(m_CBObjectType.GetCurSel(), csTemp);
 	ConvertionCtoE(csTemp);
@@ -65,6 +69,7 @@ void ObjectTool::OnBnClickedAddOBject()
 	m_mObjList.insert(make_pair(m_csObjName,m_eObjType));
 	wstring cs = m_csObjName;
 	//wcout << cs << m_eObjType << endl;
+
 	m_ListBox.AddString(m_csObjName);
 }	
 
@@ -74,7 +79,7 @@ void ObjectTool::OnBnClickedDeleteObject()
 	CString csTemp;
 	m_ListBox.GetText(m_ListBox.GetCurSel(), csTemp);
 	m_mObjList.erase(csTemp);
-	cout << m_mObjList.size() << endl;
+	//cout << m_mObjList.size() << endl;
 	m_ListBox.DeleteString(m_ListBox.GetCurSel());
 }
 
@@ -84,6 +89,29 @@ void ObjectTool::OnBnClickedDeleteObject()
 
 void ObjectTool::OnCbnSelchangeObject()
 {
+}
+
+CString ObjectTool::ConvertionEtoC(OBJECT_TYPE eObjectType)
+{
+	switch (eObjectType)
+	{
+	case OBJECT_BUILDING:
+		return L"Building";
+	case OBJECT_MONSTER:
+		return L"Monster";
+	case OBJECT_NPC:
+		return L"NPC";
+	case OBJECT_GRASS:
+		return L"Grass";
+	case OBJECT_TREE:
+		return L"Tree";
+	case OBJECT_PLAYER:
+		return L"Player";
+	case OBJECT_OBSTACLE:
+		return L"Obstacle";
+	default:
+		return L"";
+	}
 }
 
 void ObjectTool::ConvertionCtoE(CString csobjType)
@@ -163,6 +191,22 @@ BOOL ObjectTool::OnInitDialog()
 	for(int i=0;i<8;i++)
 		m_CBObjectType.AddString(csObjectType[i]);
 
+
+	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	NULL_CHECK_RETURN(pFrameWnd, FALSE);
+
+	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+	NULL_CHECK_RETURN(pFormView, FALSE);
+
+	
+	m_ImagePath = pFormView->m_ObjectPath;
+	for (auto path : m_ImagePath)
+	{
+		m_ImageBox.AddString(path.first);
+
+	}
+
+
 	ReadData();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -178,7 +222,7 @@ void ObjectTool::OnBnClickedOk()
 
 	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
 	NULL_CHECK(pFormView);
-	pFormView->m_mObjects = m_mObjList;
+	//pFormView->m_mObjects = m_mObjList;
 
 	CDialog::OnOK();
 }
@@ -193,4 +237,38 @@ void ObjectTool::OnBnClickedAniOn()
 void ObjectTool::OnBnClickedAniOff()
 {
 	m_bIsAni = false;
+}
+
+
+void ObjectTool::OnLbnSelchangeImageList()
+{
+	CString csItemName;
+
+	m_ImageBox.GetText(m_ImageBox.GetCurSel(), csItemName);
+	auto pathItr = m_ImagePath.find(csItemName);
+	m_Obj = make_pair(pathItr->first.GetString(), pathItr->second);
+
+	const TEX_INFO* pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(ConvertionEtoC(m_Obj.second).GetString(), m_Obj.first.GetString());
+	NULL_CHECK(pTexInfo);
+	float fCenterX = 0;
+	float fCenterY = 0;
+
+	D3DXMATRIX matScale, matTrans, matWorld;
+	D3DXMatrixScaling(&matScale, (float)WINCX / pTexInfo->tImgInfo.Width, (float)WINCY / pTexInfo->tImgInfo.Height, 0.f);
+	D3DXMatrixTranslation(&matTrans, 0, 0, 0.f);
+
+	matWorld = matScale * matTrans;
+
+	CDeviceMgr::GetInstance()->GetSprite()->SetTransform(&matWorld);
+	Invalidate(FALSE);
+
+
+	CDeviceMgr::GetInstance()->Render_Begin();
+
+	CDeviceMgr::GetInstance()->GetSprite()->Draw(pTexInfo->pTexture, nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f),
+		nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
+
+	CDeviceMgr::GetInstance()->Render_End(m_PreView.m_hWnd);
+
+
 }
