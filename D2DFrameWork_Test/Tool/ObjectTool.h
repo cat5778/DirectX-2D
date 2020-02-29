@@ -1,5 +1,6 @@
 #pragma once
 #include "afxwin.h"
+#include "afxcmn.h"
 
 
 // ObjectTool 대화 상자입니다.
@@ -31,12 +32,14 @@ public:
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedAniOn();
 	afx_msg void OnBnClickedAniOff();
+	afx_msg void OnLbnSelchangeImageList();
 
 private:
 	CString ConvertionEtoC(OBJECT_TYPE eObjectType);
 	void ConvertionCtoE(CString csobjType);
 	void ReadData();
 	void WriteData();
+	void DrawPreview();
 	//TODO: 이제 오브젝트툴에서 이미지 받아서 이름하고 연동시키기
 	//주의 사항 Multi ,Single 하고 애니메이션 되는지안되는지 확인가능해야함
 	
@@ -46,6 +49,8 @@ private	:
 	CListBox	m_ListBox;
 	CListBox	m_ImageBox;
 	CStatic		m_PreView;
+	CEdit m_EditImageNum;
+	CSpinButtonCtrl m_spKeyButton;
 
 
 public:
@@ -54,6 +59,6 @@ public:
 	pair<CString, OBJECT_TYPE>  m_Obj;
 	OBJECT_TYPE					m_eObjType;
 	bool						m_bIsAni;
-
-	afx_msg void OnLbnSelchangeImageList();
+	int							m_iImageKey;
+	afx_msg void OnDeltaposSpinButton(NMHDR *pNMHDR, LRESULT *pResult);
 };

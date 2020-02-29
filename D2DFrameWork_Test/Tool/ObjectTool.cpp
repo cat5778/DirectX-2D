@@ -34,6 +34,8 @@ void ObjectTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, m_CBObjectType);
 	DDX_Control(pDX, IDC_LIST2, m_ImageBox);
 	DDX_Control(pDX, IDC_Preview2, m_PreView);
+	DDX_Control(pDX, IDC_EDIT2, m_EditImageNum);
+	DDX_Control(pDX, IDC_SPIN1, m_spKeyButton);
 }
 
 BEGIN_MESSAGE_MAP(ObjectTool, CDialog)
@@ -45,6 +47,7 @@ BEGIN_MESSAGE_MAP(ObjectTool, CDialog)
 	ON_BN_CLICKED(IDC_RADIO1, &ObjectTool::OnBnClickedAniOn)
 	ON_BN_CLICKED(IDC_RADIO2, &ObjectTool::OnBnClickedAniOff)
 	ON_LBN_SELCHANGE(IDC_LIST2, &ObjectTool::OnLbnSelchangeImageList)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN1, &ObjectTool::OnDeltaposSpinButton)
 END_MESSAGE_MAP()
 
 
@@ -184,64 +187,7 @@ void ObjectTool::WriteData()
 
 }
 
-
-BOOL ObjectTool::OnInitDialog()
-{
-	CDialog::OnInitDialog();
-	CString csObjectType[8]= { L"Building",L"Tree",L"Grass",L"Monster",L"NPC",L"Player",L"Trap",L"Obstacle" };
-	for(int i=0;i<8;i++)
-		m_CBObjectType.AddString(csObjectType[i]);
-
-
-	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	NULL_CHECK_RETURN(pFrameWnd, FALSE);
-
-	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
-	NULL_CHECK_RETURN(pFormView, FALSE);
-
-	
-	m_ImagePath = pFormView->m_ObjectPath;
-	for (auto path : m_ImagePath)
-	{
-		m_ImageBox.AddString(path.first);
-
-	}
-
-
-	ReadData();
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
-}
-
-
-void ObjectTool::OnBnClickedOk()
-{
-	WriteData();
-	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	NULL_CHECK(pFrameWnd);
-
-	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
-	NULL_CHECK(pFormView);
-	//pFormView->m_mObjects = m_mObjList;
-
-	CDialog::OnOK();
-}
-
-
-void ObjectTool::OnBnClickedAniOn()
-{
-	m_bIsAni = true;
-}
-
-
-void ObjectTool::OnBnClickedAniOff()
-{
-	m_bIsAni = false;
-}
-
-
-void ObjectTool::OnLbnSelchangeImageList()
+void ObjectTool::DrawPreview()
 {
 	CString csItemName;
 
@@ -249,7 +195,7 @@ void ObjectTool::OnLbnSelchangeImageList()
 	auto pathItr = m_ImagePath.find(csItemName);
 	m_Obj = make_pair(pathItr->first.GetString(), pathItr->second);
 
-	const TEX_INFO* pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(ConvertionEtoC(m_Obj.second).GetString(), m_Obj.first.GetString());
+	const TEX_INFO* pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(ConvertionEtoC(m_Obj.second).GetString(), m_Obj.first.GetString(), m_iImageKey);
 	NULL_CHECK(pTexInfo);
 	float fCenterX = 0;
 	float fCenterY = 0;
@@ -271,5 +217,87 @@ void ObjectTool::OnLbnSelchangeImageList()
 
 	CDeviceMgr::GetInstance()->Render_End(m_PreView.m_hWnd);
 
+}
 
+
+BOOL ObjectTool::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+	CString csObjectType[8]= { L"Building",L"Tree",L"Grass",L"Monster",L"NPC",L"Player",L"Trap",L"Obstacle" };
+	for(int i=0;i<8;i++)
+		m_CBObjectType.AddString(csObjectType[i]);
+
+
+	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	NULL_CHECK_RETURN(pFrameWnd, FALSE);
+
+	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+	NULL_CHECK_RETURN(pFormView, FALSE);
+
+	m_EditImageNum.SetWindowTextW(L"0");
+	m_spKeyButton.SetRange(0, 100);
+	m_spKeyButton.SetPos(0);
+	
+	m_ImagePath = pFormView->m_ObjectPath;
+	for (auto path : m_ImagePath)
+	{
+		m_ImageBox.AddString(path.first);
+
+	}
+	//TODO: 오브젝트 이름, 사진 포지션 연관지어서 구조체하나 짜서 myform 에서 연동가능하게 만들기
+
+	ReadData();
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+}
+
+
+void ObjectTool::OnBnClickedOk()
+{
+	WriteData();
+	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	NULL_CHECK(pFrameWnd);
+
+	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+	NULL_CHECK(pFormView);
+
+	CDialog::OnOK();
+}
+
+
+void ObjectTool::OnBnClickedAniOn()
+{
+	m_bIsAni = true;
+}
+
+
+void ObjectTool::OnBnClickedAniOff()
+{
+	m_bIsAni = false;
+}
+
+
+void ObjectTool::OnLbnSelchangeImageList()
+{
+	m_EditImageNum.SetWindowTextW(L"0");
+	m_spKeyButton.SetPos(0);
+	m_iImageKey = 0;
+	DrawPreview();
+
+}
+
+
+void ObjectTool::OnDeltaposSpinButton(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	m_iImageKey = pNMUpDown->iPos + pNMUpDown->iDelta;
+	
+	CString sVal;
+	sVal.Format(_T("%d\n"), m_iImageKey);
+	m_EditImageNum.SetWindowTextW(sVal);
+
+	DrawPreview();
+
+	*pResult = 0;
 }
