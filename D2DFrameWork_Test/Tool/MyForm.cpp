@@ -10,10 +10,11 @@ IMPLEMENT_DYNCREATE(CMyForm, CFormView)
 
 CMyForm::CMyForm()
 	: CFormView(IDD_MYFORM),
-	m_byDrawID(0),
+	m_byTileNum(0),
 	m_Texname(L"TileSet1"),
-	m_byOption(0),
+	m_byTileOption(0),
 	m_iOldCount(0)
+	, m_byImageIDX(0)
 {
 
 }
@@ -25,11 +26,18 @@ CMyForm::~CMyForm()
 void CMyForm::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_EDIT1, m_byDrawID);
+	DDX_Text(pDX, IDC_EDIT1, m_byTileNum);
 	DDX_Control(pDX, IDC_LIST1, m_ListBox);
-	DDX_Text(pDX, IDC_EDIT3, m_byOption);
+	DDX_Text(pDX, IDC_EDIT3, m_byTileOption);
 	DDX_Control(pDX, IDC_Picture, m_Preview);
 	DDX_Control(pDX, IDC_COMBO1, m_ComboBox);
+	DDX_Control(pDX, IDC_EDIT2, m_edImageIDX);
+	DDX_Control(pDX, IDC_EDIT1, m_edTimeNum);
+	DDX_Control(pDX, IDC_EDIT3, m_edTileOption);
+	DDX_Control(pDX, IDC_SPIN1, m_spTileNum);
+	DDX_Control(pDX, IDC_SPIN2, m_spTileOption);
+	DDX_Text(pDX, IDC_EDIT2, m_byImageIDX);
+	DDX_Control(pDX, IDC_SPIN3, m_spImageIDX);
 }
 
 BEGIN_MESSAGE_MAP(CMyForm, CFormView)
@@ -40,6 +48,9 @@ BEGIN_MESSAGE_MAP(CMyForm, CFormView)
 	ON_EN_CHANGE(IDC_EDIT3, &CMyForm::OnEnChangeTileOption)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CMyForm::OnCbnSelchange)
 	ON_BN_CLICKED(IDC_BUTTON4, &CMyForm::OnBnClickedObject)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN1, &CMyForm::OnDeltaposTimeNum)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CMyForm::OnDeltaposTileOption)
+	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN3, &CMyForm::OnDeltaposImageIDX)
 END_MESSAGE_MAP()
 
 
@@ -75,6 +86,17 @@ void CMyForm::OnInitialUpdate()
 	m_ObjTool.Create(IDD_OBJECTTOOL);
 	m_PathTool.Create(IDD_PATHTOOL);
 
+	m_edTimeNum.SetWindowTextW(L"0");
+	m_spTileNum.SetRange(0, 100);
+	m_spTileNum.SetPos(0);
+
+	m_edTileOption.SetWindowTextW(L"0");
+	m_spTileOption.SetRange(0, 100);
+	m_spTileOption.SetPos(0);
+
+	m_edImageIDX.SetWindowTextW(L"0");
+	m_spImageIDX.SetRange(0, 100);
+	m_spImageIDX.SetPos(0);
 }
 
 
@@ -92,7 +114,7 @@ void CMyForm::OnEnChangeTileNum()
 {
 	UpdateData(TRUE);
 	
-	cout << (int)m_byDrawID << endl;
+	cout << (int)m_byTileNum << endl;
 
 }
 
@@ -163,7 +185,7 @@ HRESULT CMyForm::ReadData(wstring wstrFilePath)
 void CMyForm::OnEnChangeTileOption()
 {
 	UpdateData(TRUE);
-	cout << (int)m_byOption << endl;
+	cout << (int)m_byTileOption << endl;
 
 }
 
@@ -272,4 +294,42 @@ void CMyForm::OnBnClickedObject()
 {
 	m_PathTool.ShowWindow(SW_SHOW);
 
+}
+
+
+void CMyForm::OnDeltaposTimeNum(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	m_byTileNum = pNMUpDown->iPos + pNMUpDown->iDelta;
+
+	CString sVal;
+	sVal.Format(_T("%d\n"), m_byTileNum);
+	m_edTimeNum.SetWindowTextW(sVal);
+	//CString csTemp;
+	//m_ImageBox.GetText(m_ImageBox.GetCurSel(), csTemp);
+
+	*pResult = 0;
+}
+
+
+void CMyForm::OnDeltaposTileOption(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	m_byTileOption = pNMUpDown->iPos + pNMUpDown->iDelta;
+	CString sVal;
+	sVal.Format(_T("%d\n"), m_byTileOption);
+	m_edTileOption.SetWindowTextW(sVal);
+
+	*pResult = 0;
+}
+
+
+void CMyForm::OnDeltaposImageIDX(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
+	m_byImageIDX = pNMUpDown->iPos + pNMUpDown->iDelta;
+	CString sVal;
+	sVal.Format(_T("%d\n"), m_byImageIDX);
+	m_edImageIDX.SetWindowTextW(sVal);
+	*pResult = 0;
 }

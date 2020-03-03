@@ -4,6 +4,7 @@
 #include "ObjectTool.h"
 #include "PathTool.h"
 #include "afxwin.h"
+#include "afxcmn.h"
 // CMyForm Æû ºäÀÔ´Ï´Ù.
 class CMyForm : public CFormView
 {
@@ -38,11 +39,12 @@ public:
 	afx_msg void OnEnChangeTileOption();
 	afx_msg void OnEnChangeTileNum();
 	afx_msg void OnCbnSelchange();
+	afx_msg void OnBnClickedObject();
 private:
 	void ConvertionCtoE(CString csobjType);
-
 	CString ConvertionEtoC(OBJECT_TYPE eObjectType);
 	HRESULT ReadData(wstring wstrFilePath);
+
 
 public: // Tool Class
 	TileTool		m_TileTool;
@@ -53,6 +55,7 @@ public:
 	CDeviceMgr*		m_pDeviceMgr;
 	CTextureMgr*	m_pTextureMgr;
 public:
+
 	CListBox m_ListBox;
 	CStatic m_Preview;
 	CComboBox m_ComboBox;
@@ -61,13 +64,24 @@ public:
 public:
 	map<CString, OBJECT_TYPE> m_ObjectPath;
 	map<CString, CString> m_mTilePath;
-	wstring m_Texname;
-	BYTE m_byDrawID;
-	BYTE m_byOption;
-	OBJECT_TYPE m_eObjType;
 	pair<CString, CString> m_TilePath;
+	wstring m_Texname;
+	BYTE m_byTileNum;
+	BYTE m_byTileOption;
+	OBJECT_TYPE m_eObjType;
 
-	afx_msg void OnBnClickedObject();
+	afx_msg void OnDeltaposTimeNum(NMHDR *pNMHDR, LRESULT *pResult);
+	CEdit m_edTimeNum;
+	CSpinButtonCtrl m_spTileNum;
+
+	afx_msg void OnDeltaposTileOption(NMHDR *pNMHDR, LRESULT *pResult);
+	CEdit m_edTileOption;
+	CSpinButtonCtrl m_spTileOption;
+	
+	afx_msg void OnDeltaposImageIDX(NMHDR *pNMHDR, LRESULT *pResult);
+	CEdit m_edImageIDX;
+	BYTE m_byImageIDX;
+	CSpinButtonCtrl m_spImageIDX;
 };
 
 

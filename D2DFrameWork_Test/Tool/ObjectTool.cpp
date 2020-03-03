@@ -18,6 +18,7 @@ ObjectTool::ObjectTool(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD_OBJECTTOOL, pParent)
 	, m_csObjName(_T(""))
 	, m_bIsAni(false)
+	, m_AniButton(0)
 {
 
 }
@@ -36,6 +37,7 @@ void ObjectTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_Preview2, m_PreView);
 	DDX_Control(pDX, IDC_EDIT2, m_EditImageNum);
 	DDX_Control(pDX, IDC_SPIN1, m_spKeyButton);
+	DDX_Radio(pDX, IDC_RADIO1, m_AniButton);
 }
 
 BEGIN_MESSAGE_MAP(ObjectTool, CDialog)
@@ -48,6 +50,7 @@ BEGIN_MESSAGE_MAP(ObjectTool, CDialog)
 	ON_BN_CLICKED(IDC_RADIO2, &ObjectTool::OnBnClickedAniOff)
 	ON_LBN_SELCHANGE(IDC_LIST2, &ObjectTool::OnLbnSelchangeImageList)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN1, &ObjectTool::OnDeltaposSpinButton)
+	ON_LBN_SELCHANGE(IDC_LIST1, &ObjectTool::OnLbnSelchangeObjectList)
 END_MESSAGE_MAP()
 
 
@@ -69,11 +72,22 @@ void ObjectTool::OnBnClickedAddOBject()
 	m_CBObjectType.GetLBText(m_CBObjectType.GetCurSel(), csTemp);
 	ConvertionCtoE(csTemp);
 
-	m_mObjList.insert(make_pair(m_csObjName,m_eObjType));
-	wstring cs = m_csObjName;
-	//wcout << cs << m_eObjType << endl;
+	CString csSelectImage;
+	m_ImageBox.GetText(m_ImageBox.GetCurSel(), csSelectImage);
 
-	m_ListBox.AddString(m_csObjName);
+
+	OBJ_INFO* temp = new OBJ_INFO;
+	temp->wstrObjectName = m_csObjName;
+	auto pathItr = m_ImagePath.find(csSelectImage);
+	temp->wstrObjectKey = ConvertionEtoC(pathItr->second).GetString();
+	temp->wstrStateKey = pathItr->first.GetString();
+	temp->eObjectType = m_eObjType;
+	temp->ImageIDX = m_iImageKey;
+	temp->IsAni = IsAni();
+	m_pObjList.push_back(temp);
+	m_csObjName = L"";
+	UpdateData(false);
+	m_ListBox.AddString(temp->wstrObjectName.c_str());
 }	
 
 
@@ -81,8 +95,17 @@ void ObjectTool::OnBnClickedDeleteObject()
 {	
 	CString csTemp;
 	m_ListBox.GetText(m_ListBox.GetCurSel(), csTemp);
-	m_mObjList.erase(csTemp);
-	//cout << m_mObjList.size() << endl;
+	auto itr = m_pObjList.begin();
+	for (; itr != m_pObjList.end();)
+	{
+		if ((*itr)->wstrObjectName.compare(csTemp.GetString()) == 0)
+		{
+			itr = m_pObjList.erase(itr);
+		}
+		else
+			itr++;
+	}
+
 	m_ListBox.DeleteString(m_ListBox.GetCurSel());
 }
 
@@ -152,19 +175,31 @@ void ObjectTool::ReadData()
 	char cTemp[32];
 	while (!fin.eof())
 	{
+		OBJ_INFO *temp = new OBJ_INFO;
 		fin.getline(cTemp, 32); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
 		csTemp = cTemp;
+		temp->wstrObjectName = csTemp.GetString();
 		fin.getline(cTemp, 32); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
-		m_mObjList.insert(make_pair(csTemp, (OBJECT_TYPE)atoi(cTemp)));
+		csTemp = cTemp;
+		temp->wstrObjectKey = csTemp.GetString();
+		fin.getline(cTemp, 32); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		csTemp = cTemp;
+		temp->wstrStateKey = csTemp.GetString();
+		fin.getline(cTemp, 32); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		temp->IsAni = (bool)atoi(cTemp);
+		fin.getline(cTemp, 32); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		temp->ImageIDX= (DWORD)atoi(cTemp);
+		fin.getline(cTemp, 32); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
+		temp->eObjectType=(OBJECT_TYPE)atoi(cTemp);
+		m_pObjList.push_back(temp);
 	}
 	fin.close();
-	for (auto object : m_mObjList)
+	for (auto pObj : m_pObjList)
 	{ 
-		if (object.first.Compare(L"") == 0)
+		if (pObj->wstrObjectName.compare(L"") == 0)
 			continue;
-		m_ListBox.AddString(object.first);
+		m_ListBox.AddString((pObj->wstrObjectName.c_str()));
 	}
-	//return	;
 }
 
 void ObjectTool::WriteData()
@@ -174,25 +209,25 @@ void ObjectTool::WriteData()
 	fout.open("../Data/ObjectList.txt", ios::trunc);
 	if (fout.fail())
 		return;
-	//_TCHAR buf[32];
-	for (auto Object : m_mObjList)
-	{
-		if (Object.first.Compare(L"")==0)
-			continue;
-		fout << CW2A(Object.first) << endl;
-		fout << Object.second << endl;
-	}
 
+	for (auto pObj : m_pObjList)
+	{
+		if (pObj->wstrObjectName.compare(L"") == 0)
+			continue;
+		fout << CW2A(pObj->wstrObjectName.c_str()) << endl;
+		fout << CW2A(pObj->wstrObjectKey.c_str()) << endl;
+		fout << CW2A(pObj->wstrStateKey.c_str()) << endl;
+		fout << pObj->IsAni << endl;
+		fout << pObj->ImageIDX << endl;
+		fout << pObj->eObjectType<< endl;
+	}
 	fout.close();
 
 }
 
-void ObjectTool::DrawPreview()
+void ObjectTool::DrawPreview(CString _csImageName)
 {
-	CString csItemName;
-
-	m_ImageBox.GetText(m_ImageBox.GetCurSel(), csItemName);
-	auto pathItr = m_ImagePath.find(csItemName);
+	auto pathItr = m_ImagePath.find(_csImageName);
 	m_Obj = make_pair(pathItr->first.GetString(), pathItr->second);
 
 	const TEX_INFO* pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(ConvertionEtoC(m_Obj.second).GetString(), m_Obj.first.GetString(), m_iImageKey);
@@ -219,6 +254,17 @@ void ObjectTool::DrawPreview()
 
 }
 
+bool ObjectTool::IsAni()
+{
+	switch (m_AniButton)
+	{
+	case 0:
+		return true;
+	case 1:
+		return false;
+	}
+	return false;
+}
 
 BOOL ObjectTool::OnInitDialog()
 {
@@ -244,7 +290,6 @@ BOOL ObjectTool::OnInitDialog()
 		m_ImageBox.AddString(path.first);
 
 	}
-	//TODO: 오브젝트 이름, 사진 포지션 연관지어서 구조체하나 짜서 myform 에서 연동가능하게 만들기
 
 	ReadData();
 
@@ -283,7 +328,9 @@ void ObjectTool::OnLbnSelchangeImageList()
 	m_EditImageNum.SetWindowTextW(L"0");
 	m_spKeyButton.SetPos(0);
 	m_iImageKey = 0;
-	DrawPreview();
+	CString csTemp;
+	m_ImageBox.GetText(m_ImageBox.GetCurSel(), csTemp);
+	DrawPreview(csTemp);
 
 }
 
@@ -296,8 +343,36 @@ void ObjectTool::OnDeltaposSpinButton(NMHDR *pNMHDR, LRESULT *pResult)
 	CString sVal;
 	sVal.Format(_T("%d\n"), m_iImageKey);
 	m_EditImageNum.SetWindowTextW(sVal);
-
-	DrawPreview();
+	CString csTemp;
+	m_ImageBox.GetText(m_ImageBox.GetCurSel(), csTemp);
+	DrawPreview(csTemp);
 
 	*pResult = 0;
+}
+
+
+void ObjectTool::OnLbnSelchangeObjectList()
+{
+	
+	CString csObjectName;
+
+	m_ListBox.GetText(m_ListBox.GetCurSel(), csObjectName);
+	for_each(m_pObjList.begin(), m_pObjList.end(), [&](OBJ_INFO* cur)
+	{
+		if (cur->wstrObjectName.compare(csObjectName.GetString()) == 0)
+		{
+			m_AniButton = cur->IsAni;
+			m_iImageKey = cur->ImageIDX;
+			m_eObjType = cur->eObjectType;
+			m_CBObjectType.SetCurSel(m_CBObjectType.FindString(-1, ConvertionEtoC(cur->eObjectType)));
+			m_csObjName=csObjectName;
+			UpdateData(false);
+			CString csTemp = cur->wstrStateKey.c_str();
+			DrawPreview(csTemp);
+		}
+	});
+	
+	//m_Obj = make_pair(pathItr->first.GetString(), pathItr->second);
+
+
 }

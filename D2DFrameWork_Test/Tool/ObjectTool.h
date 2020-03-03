@@ -33,32 +33,36 @@ public:
 	afx_msg void OnBnClickedAniOn();
 	afx_msg void OnBnClickedAniOff();
 	afx_msg void OnLbnSelchangeImageList();
+	afx_msg void OnDeltaposSpinButton(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnLbnSelchangeObjectList();
 
 private:
 	CString ConvertionEtoC(OBJECT_TYPE eObjectType);
 	void ConvertionCtoE(CString csobjType);
 	void ReadData();
 	void WriteData();
-	void DrawPreview();
+	void DrawPreview(CString _csImageName);
+	bool IsAni();
 	//TODO: 이제 오브젝트툴에서 이미지 받아서 이름하고 연동시키기
 	//주의 사항 Multi ,Single 하고 애니메이션 되는지안되는지 확인가능해야함
-	
+	//m_ImageBox.GetText(m_ImageBox.GetCurSel(), _csImageName);
 private	:
-	CComboBox	m_CBObjectType;
-	CString		m_csObjName;
-	CListBox	m_ListBox;
-	CListBox	m_ImageBox;
-	CStatic		m_PreView;
-	CEdit m_EditImageNum;
+	CComboBox		m_CBObjectType;
+	CString			m_csObjName;
+	CListBox		m_ListBox;
+	CListBox		m_ImageBox;
+	CStatic			m_PreView;
+	CEdit			m_EditImageNum;
 	CSpinButtonCtrl m_spKeyButton;
+	int				m_AniButton;
 
 
 public:
 	map<CString, OBJECT_TYPE>	m_ImagePath;
-	map<CString, OBJECT_TYPE>	m_mObjList;
+	list<OBJ_INFO*>				m_pObjList;
+	map<CString, OBJECT_TYPE>	m_mObjList;  //나중에 지우고 변경
 	pair<CString, OBJECT_TYPE>  m_Obj;
 	OBJECT_TYPE					m_eObjType;
 	bool						m_bIsAni;
 	int							m_iImageKey;
-	afx_msg void OnDeltaposSpinButton(NMHDR *pNMHDR, LRESULT *pResult);
 };

@@ -69,7 +69,7 @@ typedef struct ObjectInfo
 	std::wstring	wstrObjectKey;
 	std::wstring	wstrStateKey;
 	bool			IsAni;
+	WORD			ImageIDX;
 	OBJECT_TYPE		eObjectType;
-	D3DXVECTOR3		vSpawnPos;
 	
 }OBJ_INFO;
