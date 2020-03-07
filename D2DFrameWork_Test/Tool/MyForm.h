@@ -40,11 +40,15 @@ public:
 	afx_msg void OnEnChangeTileNum();
 	afx_msg void OnCbnSelchange();
 	afx_msg void OnBnClickedObject();
+	afx_msg void OnDeltaposTimeNum(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposTileOption(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnDeltaposImageIDX(NMHDR *pNMHDR, LRESULT *pResult);
 private:
 	void ConvertionCtoE(CString csobjType);
 	CString ConvertionEtoC(OBJECT_TYPE eObjectType);
 	HRESULT ReadData(wstring wstrFilePath);
-
+	void PreviewTile(CString csTileName);
+	void PreiviewObject(CString csItemName);
 
 public: // Tool Class
 	TileTool		m_TileTool;
@@ -55,33 +59,32 @@ public:
 	CDeviceMgr*		m_pDeviceMgr;
 	CTextureMgr*	m_pTextureMgr;
 public:
-
-	CListBox m_ListBox;
-	CStatic m_Preview;
-	CComboBox m_ComboBox;
-	int m_iOldCount;
+	CSpinButtonCtrl m_spTileNum;
+	CSpinButtonCtrl m_spTileOption;
+	CSpinButtonCtrl m_spImageIDX;
+	CEdit			m_edTimeNum;
+	CEdit			m_edTileOption;
+	CEdit			m_edImageIDX;
+	CListBox		m_ListBox;
+	CStatic			m_Preview;
+	CComboBox		m_ComboBox;
+	int				m_iOldCount;
 
 public:
-	map<CString, OBJECT_TYPE> m_ObjectPath;
-	map<CString, CString> m_mTilePath;
-	pair<CString, CString> m_TilePath;
-	wstring m_Texname;
-	BYTE m_byTileNum;
-	BYTE m_byTileOption;
-	OBJECT_TYPE m_eObjType;
+	map<CString, OBJECT_TYPE>	m_ObjectPath;
+	map<CString, CString>		m_mTilePath;
+	pair<CString, CString>		m_TilePath;
+	wstring						m_Texname;
+	BYTE						m_byTileNum;
+	BYTE						m_byTileOption;
+	OBJECT_TYPE					m_eObjType;
+	BYTE						m_byImageIDX;
 
-	afx_msg void OnDeltaposTimeNum(NMHDR *pNMHDR, LRESULT *pResult);
-	CEdit m_edTimeNum;
-	CSpinButtonCtrl m_spTileNum;
-
-	afx_msg void OnDeltaposTileOption(NMHDR *pNMHDR, LRESULT *pResult);
-	CEdit m_edTileOption;
-	CSpinButtonCtrl m_spTileOption;
+	list<OBJ_INFO*>				m_pObjList;
+	list<OBJ_INFO*>::iterator	m_CurObjItr;
+	pair<wstring, wstring>		m_Obj;
+	CString						m_csCurObjName;
 	
-	afx_msg void OnDeltaposImageIDX(NMHDR *pNMHDR, LRESULT *pResult);
-	CEdit m_edImageIDX;
-	BYTE m_byImageIDX;
-	CSpinButtonCtrl m_spImageIDX;
 };
 
 

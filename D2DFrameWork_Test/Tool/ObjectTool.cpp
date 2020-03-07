@@ -83,7 +83,7 @@ void ObjectTool::OnBnClickedAddOBject()
 	temp->wstrStateKey = pathItr->first.GetString();
 	temp->eObjectType = m_eObjType;
 	temp->ImageIDX = m_iImageKey;
-	temp->IsAni = IsAni();
+	temp->IsAni = m_bIsAni;
 	m_pObjList.push_back(temp);
 	m_csObjName = L"";
 	UpdateData(false);
@@ -259,8 +259,11 @@ bool ObjectTool::IsAni()
 	switch (m_AniButton)
 	{
 	case 0:
+		cout << "true 버튼" << endl;
 		return true;
 	case 1:
+		cout << "false 버튼" << endl;
+
 		return false;
 	}
 	return false;
@@ -292,7 +295,7 @@ BOOL ObjectTool::OnInitDialog()
 	}
 
 	ReadData();
-
+	pFormView->m_pObjList = m_pObjList;
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
 }
@@ -325,6 +328,7 @@ void ObjectTool::OnBnClickedAniOff()
 
 void ObjectTool::OnLbnSelchangeImageList()
 {
+	m_ListBox.SetCurSel(-1);
 	m_EditImageNum.SetWindowTextW(L"0");
 	m_spKeyButton.SetPos(0);
 	m_iImageKey = 0;
@@ -361,7 +365,7 @@ void ObjectTool::OnLbnSelchangeObjectList()
 	{
 		if (cur->wstrObjectName.compare(csObjectName.GetString()) == 0)
 		{
-			m_AniButton = cur->IsAni;
+			m_AniButton = !(cur->IsAni);
 			m_iImageKey = cur->ImageIDX;
 			m_eObjType = cur->eObjectType;
 			m_CBObjectType.SetCurSel(m_CBObjectType.FindString(-1, ConvertionEtoC(cur->eObjectType)));

@@ -14,6 +14,7 @@
 #include "Terrain.h"
 #include "MiniView.h"
 #include "MyForm.h"
+#include "RespawnManager.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -30,6 +31,7 @@ BEGIN_MESSAGE_MAP(CToolView, CScrollView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CScrollView::OnFilePrintPreview)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
+	ON_WM_RBUTTONDOWN()
 END_MESSAGE_MAP()
 
 // CToolView 생성/소멸
@@ -39,7 +41,8 @@ HWND g_hWnd;
 
 CToolView::CToolView()
 	: m_pDeviceMgr(CDeviceMgr::GetInstance()),
-	m_pTextureMgr(CTextureMgr::GetInstance())
+	m_pTextureMgr(CTextureMgr::GetInstance()),
+	m_pFormView(nullptr)
 {
 
 }
@@ -68,15 +71,16 @@ void CToolView::OnDraw(CDC* /*pDC*/)
 		return;
 
 	m_pDeviceMgr->Render_Begin();
-
+	Render();
 	CTerrain::GetInstance()->Render();
-
+	CRespawnManager::GetInstance()->Render();
 	m_pDeviceMgr->Render_End();
 	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	NULL_CHECK(pFrameWnd);
 
 	CMiniView* pMiniView = dynamic_cast<CMiniView*>(pFrameWnd->m_SecondSplitter.GetPane(0, 0));
 	NULL_CHECK(pMiniView);
+	
 
 
 	
@@ -181,30 +185,88 @@ void CToolView::OnInitialUpdate()
 
 	CTerrain::GetInstance()->Initialize();
 	CTerrain::GetInstance()->m_pView = this;
+	CRespawnManager::GetInstance()->m_pView = this;
+}
+
+D3DXVECTOR3 CToolView::ConvertPos(D3DXVECTOR3 Pos)
+{
+	D3DXVECTOR3 tempPos;
+	tempPos.x = ((int)Pos.x / TILECX)*TILECX;
+	tempPos.y = ((int)Pos.y / TILECY)*TILECY;
+	return tempPos;
+
+}
+
+void CToolView::Render()
+{
+	if (m_pFormView == nullptr)
+	{
+		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+		NULL_CHECK(pFrameWnd);
+
+		m_pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+		NULL_CHECK(m_pFormView);
+	}
+
+	D3DXMATRIX matScale, matTrans;
+	float fCenterX = 0.f, fCenterY = 0.f;
+	const TEX_INFO* pTexInfo = nullptr;
+	pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(m_pFormView->m_Obj.first, m_pFormView->m_Obj.second, m_pFormView->m_byImageIDX);
+	NULL_CHECK(pTexInfo);
+	if(pTexInfo != nullptr)
+	{
+		CRespawnManager::GetInstance()->ConvertPos(*(*m_pFormView->m_CurObjItr), *pTexInfo, m_vPoint);
+
+		D3DXMatrixScaling(&matScale,1, 1, 1);
+		D3DXMatrixTranslation(&matTrans,
+			m_vPoint.x - this->GetScrollPos(0),
+			m_vPoint.y - this->GetScrollPos(1),
+			m_vPoint.z = CRespawnManager::GetInstance()->ZOrder(m_vPoint.y));
+
+		fCenterX = TILECX*0.5f;
+		fCenterY = TILECY*0.5f;
+		CDeviceMgr::GetInstance()->GetSprite()->SetTransform(&(matScale * matTrans));
+		CDeviceMgr::GetInstance()->GetSprite()->Draw(pTexInfo->pTexture, nullptr,
+			&D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(140, 255, 255, 255));
+	}
+
+
+
 }
 
 
 void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	//cout << "X=" << point.x << " Y=" << point.y << endl;
 	D3DXVECTOR3 vPoint =
 	{
 		(float)point.x + CScrollView::GetScrollPos(0),
 		(float)point.y + CScrollView::GetScrollPos(1),
 		0.f
 	};
-	//cout << "X=" << vPoint.x << " Y=" << vPoint.y << endl;
 
-	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	NULL_CHECK(pFrameWnd);
+	
+	switch (m_pFormView->m_eObjType)
+	{
+	case OBJECT_TERRAIN:
+		CTerrain::GetInstance()->TileChange(vPoint, m_pFormView->m_byTileNum, m_pFormView->m_byTileOption, m_pFormView->m_TilePath.first.GetString());
+		break;
+	default:
 
-	CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
-	NULL_CHECK(pFormView);
-
-	CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byTileNum, pFormView->m_byTileOption, pFormView->m_TilePath.first.GetString());
-	//wcout <<L"Toolview= "<< pFormView->m_TilePath.first.GetString() << endl;
-
-	// 화면 갱신 (WM_PAINT 발생)
+		D3DXVECTOR3 vPos;
+		vPos = vPoint;
+		OBJ_INFO *objTemp = new OBJ_INFO;
+		*objTemp = *(*m_pFormView->m_CurObjItr);
+		objTemp->ImageIDX= m_pFormView->m_byImageIDX;
+		if (CRespawnManager::GetInstance()->CheckObject(*objTemp, vPos))
+			CRespawnManager::GetInstance()->m_mObjects.insert(make_pair(objTemp, vPos));
+		else
+		{
+			delete objTemp;
+			objTemp = nullptr;
+		}
+		break;
+	}
+	cout << "Object 갯수=" << CRespawnManager::GetInstance()->m_mObjects.size() << endl;
 	Invalidate(FALSE);
 
 	CScrollView::OnLButtonDown(nFlags, point);
@@ -213,28 +275,118 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 {
+	const TEX_INFO* pTexInfo = nullptr;
 	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
 		D3DXVECTOR3 vPoint =
 		{
 			(float)point.x + CScrollView::GetScrollPos(0),
-			(float)point.y + CScrollView::GetScrollPos(1), 
+			(float)point.y + CScrollView::GetScrollPos(1),
 			0.f
 		};
 
+	
 		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 		NULL_CHECK(pFrameWnd);
 
-		CMyForm* pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
-		NULL_CHECK(pFormView);
+		CMyForm* m_pFormView = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+		NULL_CHECK(m_pFormView);
 
+		switch (m_pFormView->m_eObjType)
+		{
+		case OBJECT_TERRAIN:
+			CTerrain::GetInstance()->TileChange(vPoint, m_pFormView->m_byTileNum, m_pFormView->m_byTileOption, m_pFormView->m_TilePath.first.GetString());
+			break;
+		default:
+			D3DXVECTOR3 vPos;
+			vPos = vPoint;
+			OBJ_INFO *objTemp = new OBJ_INFO;
+			*objTemp = *(*m_pFormView->m_CurObjItr);
+			objTemp->ImageIDX = m_pFormView->m_byImageIDX;
+			if (CRespawnManager::GetInstance()->CheckObject(*objTemp, vPos))
+				CRespawnManager::GetInstance()->m_mObjects.insert(make_pair(objTemp, vPos));
+			else
+			{
+				delete objTemp;
+				objTemp = nullptr;
+			}
+			break;
+		}
+		cout << "Object 갯수=" << CRespawnManager::GetInstance()->m_mObjects.size() << endl;
+	}
+	else
+	{
+		switch (m_pFormView->m_eObjType)
+		{
+		case OBJECT_TERRAIN:
+			break;
+		default:
+			//if (!m_pFormView->m_Obj.first.empty())
+			//{
+			//	D3DXMATRIX matScale, matTrans;
+			//	float fCenterX = 0.f, fCenterY = 0.f;
+				m_vPoint =
+				{
+					(float)point.x + CScrollView::GetScrollPos(0),
+					(float)point.y + CScrollView::GetScrollPos(1),
+					0.f
+				};
+			//	pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(m_pFormView->m_Obj.first, m_pFormView->m_Obj.second, m_pFormView->m_byImageIDX);
+			//	NULL_CHECK(pTexInfo);
+			//	CRespawnManager::GetInstance()->ConvertPos(*(*m_pFormView->m_CurObjItr),*pTexInfo, vPoint);
 
-		//m_pTerrain->TileChange(vPoint, pFormView->m_MapTool.m_iDrawID);
-		CTerrain::GetInstance()->TileChange(vPoint, pFormView->m_byTileNum, pFormView->m_byTileOption, pFormView->m_TilePath.first.GetString());
+			//	D3DXMatrixScaling(&matScale,
+			//		1, 1, 1);
+			//	D3DXMatrixTranslation(&matTrans,
+			//		vPoint.x - this->GetScrollPos(0),
+			//		vPoint.y - this->GetScrollPos(1),
+			//		vPoint.z=CRespawnManager::GetInstance()->ZOrder(vPoint.y));
 
+			//	fCenterX = TILECX*0.5f;
+			//	fCenterY = TILECY*0.5f;
+			//	CDeviceMgr::GetInstance()->GetSprite()->SetTransform(&(matScale * matTrans));
+			//	CDeviceMgr::GetInstance()->GetSprite()->Draw(pTexInfo->pTexture, nullptr,
+			//		&D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
+			//}
+
+			break;
+		}
+
+	}
 		// 화면 갱신 (WM_PAINT 발생)
 		Invalidate(FALSE);
-	}
 
 	CScrollView::OnMouseMove(nFlags, point);
 }
+
+
+void CToolView::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
+	{
+		D3DXVECTOR3 vPoint =
+		{
+			(float)point.x + CScrollView::GetScrollPos(0),
+			(float)point.y + CScrollView::GetScrollPos(1),
+			0.f
+		};
+
+
+	
+		switch (m_pFormView->m_eObjType)
+		{
+		case OBJECT_TERRAIN:
+			break;
+		default://TODO: 지금 오브젝트 지우는 거 만드는중!!!
+			
+			break;
+		}
+
+	}
+	Invalidate(FALSE);
+	cout << "Object 갯수=" << CRespawnManager::GetInstance()->m_mObjects.size() << endl;
+
+	CScrollView::OnRButtonDown(nFlags, point);
+
+}
+

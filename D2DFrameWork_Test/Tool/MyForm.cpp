@@ -14,7 +14,8 @@ CMyForm::CMyForm()
 	m_Texname(L"TileSet1"),
 	m_byTileOption(0),
 	m_iOldCount(0)
-	, m_byImageIDX(0)
+	, m_byImageIDX(0),
+	m_Obj(L"",L"")
 {
 
 }
@@ -181,30 +182,10 @@ HRESULT CMyForm::ReadData(wstring wstrFilePath)
 	return E_NOTIMPL;
 }
 
-
-void CMyForm::OnEnChangeTileOption()
+void CMyForm::PreviewTile(CString csTileName)
 {
-	UpdateData(TRUE);
-	cout << (int)m_byTileOption << endl;
+	m_TilePath = make_pair(m_mTilePath.find(csTileName)->first.GetString(), m_mTilePath.find(csTileName)->second.GetString());
 
-}
-
-
-void CMyForm::OnLbnSelchangeList()
-{
-	CString csItemName;
-
-	//cout << csItemName << endl;
-
-
-	m_ListBox.GetText(m_ListBox.GetCurSel(), csItemName);
-	// 픽처 컨트롤에 타일 미리보기 출력.
-	
-	m_TilePath = make_pair(m_mTilePath.find(csItemName)->first.GetString(), m_mTilePath.find(csItemName)->second.GetString());
-	//wcout << m_TilePath.first.GetString() << endl;
-
-	//wcout << m_TilePath.second.GetString() << endl;
-	
 	const TEX_INFO* pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(m_TilePath.second.GetString(), m_TilePath.first.GetString());
 	NULL_CHECK(pTexInfo);
 	float fCenterX = 0;
@@ -226,8 +207,66 @@ void CMyForm::OnLbnSelchangeList()
 		nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
 
 	CDeviceMgr::GetInstance()->Render_End(m_Preview.m_hWnd);
+}
+
+void CMyForm::PreiviewObject(CString csItemName)
+{
+	m_CurObjItr = m_pObjList.begin();
+	for (; m_CurObjItr != m_pObjList.end(); m_CurObjItr++)
+	{
+		if ((*m_CurObjItr)->wstrObjectName.compare(csItemName.GetString()) == 0)
+			break;
+	}
+
+	m_Obj = make_pair((*m_CurObjItr)->wstrObjectKey,(*m_CurObjItr)->wstrStateKey);
+
+	const TEX_INFO* pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(m_Obj.first, m_Obj.second, m_byImageIDX);
+	NULL_CHECK(pTexInfo);
+	float fCenterX = 0;
+	float fCenterY = 0;
+
+	D3DXMATRIX matScale, matTrans, matWorld;
+	D3DXMatrixScaling(&matScale, (float)WINCX / pTexInfo->tImgInfo.Width, (float)WINCY / pTexInfo->tImgInfo.Height, 0.f);
+	D3DXMatrixTranslation(&matTrans, 0, 0, 0.f);
+
+	matWorld = matScale * matTrans;
+
+	CDeviceMgr::GetInstance()->GetSprite()->SetTransform(&matWorld);
+	Invalidate(FALSE);
 
 
+	CDeviceMgr::GetInstance()->Render_Begin();
+
+	CDeviceMgr::GetInstance()->GetSprite()->Draw(pTexInfo->pTexture, nullptr, &D3DXVECTOR3(fCenterX, fCenterY, 0.f),
+		nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
+
+
+	CDeviceMgr::GetInstance()->Render_End(m_Preview.m_hWnd);
+
+}
+
+
+void CMyForm::OnEnChangeTileOption()
+{
+	UpdateData(TRUE);
+
+}
+
+
+void CMyForm::OnLbnSelchangeList()
+{
+
+	CString csItemName;
+	m_ListBox.GetText(m_ListBox.GetCurSel(), csItemName);
+	switch (m_eObjType)
+	{
+	case OBJECT_TERRAIN:
+		PreviewTile(csItemName);
+		break;
+	default:
+		PreiviewObject(csItemName);
+		break;
+	}
 
 
 }
@@ -244,27 +283,63 @@ void CMyForm::OnBnClickedObjectTool()
 void CMyForm::OnCbnSelchange()
 {
 	m_ListBox.ResetContent();
-	CString cs;
+	CString cs,csTemp;
 	m_ComboBox.GetLBText(m_ComboBox.GetCurSel(), cs);
-
-	if (cs.Compare(L"Tile") == 0)
+	ConvertionCtoE(cs);
+	switch (m_eObjType)
 	{
+	case OBJECT_TERRAIN:
 		for (auto path : m_mTilePath)
 			m_ListBox.AddString(path.first);
-
-	}
-	for (auto object : m_ObjectPath)
-	{
-		if (cs.Compare(ConvertionEtoC(object.second)) == 0)
+		break;
+	case OBJECT_OBSTACLE:
+		for (auto pObj : m_pObjList)
 		{
-			//wcout << object.first.GetString() << endl;
-			m_ListBox.AddString(object.first);
-			m_iOldCount++;
+			if (pObj->wstrObjectName.compare(L"")==0)
+				continue;
+			csTemp = pObj->wstrObjectName.c_str();
+			m_ListBox.AddString(csTemp);
 		}
-		
+		break;
+	case OBJECT_TRAP:
+		break;
+	case OBJECT_BUILDING:
+		break;
+	case OBJECT_MONSTER:
+		break;
+	case OBJECT_NPC:
+		break;
+	case OBJECT_GRASS:
+		break;
+	case OBJECT_TREE:
+		break;
+	case OBJECT_PLAYER:
+		break;
+	case OBJECT_EFFECT:
+		break;
+	case OBJECT_UI:
+		break;
+	case OBJECT_END:
+		break;
+	default:
+		break;
 	}
-	//wcout << cs.GetString() << endl;
-	m_iOldCount = 0;
+	//if (cs.Compare(L"Tile") == 0)
+	//{
+	//	for (auto path : m_mTilePath)
+	//		m_ListBox.AddString(path.first);
+
+	//}
+	//for (auto object : m_ObjectPath)
+	//{
+	//	if (cs.Compare(ConvertionEtoC(object.second)) == 0)
+	//	{
+	//		m_ListBox.AddString(object.first);
+	//		m_iOldCount++;
+	//	}
+	//	
+	//}
+	//m_iOldCount = 0;
 
 }
 
@@ -286,6 +361,8 @@ void CMyForm::ConvertionCtoE(CString csobjType)
 		m_eObjType = OBJECT_TRAP;
 	else if (csobjType.Compare(L"Obstacle") == 0)
 		m_eObjType = OBJECT_OBSTACLE;
+	else if (csobjType.Compare(L"Tile") == 0)
+		m_eObjType = OBJECT_TERRAIN;
 
 }
 
@@ -305,8 +382,6 @@ void CMyForm::OnDeltaposTimeNum(NMHDR *pNMHDR, LRESULT *pResult)
 	CString sVal;
 	sVal.Format(_T("%d\n"), m_byTileNum);
 	m_edTimeNum.SetWindowTextW(sVal);
-	//CString csTemp;
-	//m_ImageBox.GetText(m_ImageBox.GetCurSel(), csTemp);
 
 	*pResult = 0;
 }
@@ -331,5 +406,10 @@ void CMyForm::OnDeltaposImageIDX(NMHDR *pNMHDR, LRESULT *pResult)
 	CString sVal;
 	sVal.Format(_T("%d\n"), m_byImageIDX);
 	m_edImageIDX.SetWindowTextW(sVal);
+	if (m_eObjType != OBJECT_TERRAIN)
+	{
+		m_ListBox.GetText(m_ListBox.GetCurSel(), m_csCurObjName);
+		PreiviewObject(m_csCurObjName);
+	}
 	*pResult = 0;
 }

@@ -43,8 +43,7 @@ private:
 	void WriteData();
 	void DrawPreview(CString _csImageName);
 	bool IsAni();
-	//TODO: 이제 오브젝트툴에서 이미지 받아서 이름하고 연동시키기
-	//주의 사항 Multi ,Single 하고 애니메이션 되는지안되는지 확인가능해야함
+	//TODO: 주의 사항 Multi ,Single 하고 애니메이션 되는지안되는지 확인가능해야함
 	//m_ImageBox.GetText(m_ImageBox.GetCurSel(), _csImageName);
 private	:
 	CComboBox		m_CBObjectType;

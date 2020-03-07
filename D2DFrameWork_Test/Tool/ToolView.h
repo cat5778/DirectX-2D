@@ -5,7 +5,7 @@
 #pragma once
 
 class CToolDoc;
-
+class CMyForm;
 class CToolView : public CScrollView
 {
 protected: // serialization에서만 만들어집니다.
@@ -35,21 +35,30 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
-
 protected:
 
 // 생성된 메시지 맵 함수
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
-	virtual void OnInitialUpdate();
-
-public:
-	CDeviceMgr*		m_pDeviceMgr;
-	CTextureMgr*	m_pTextureMgr;
-
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	
+	virtual void OnInitialUpdate();
+public:
+	D3DXVECTOR3 ConvertPos(D3DXVECTOR3 Pos);
+	void Render();
+
+public:
+	CDeviceMgr*					m_pDeviceMgr;
+	CTextureMgr*				m_pTextureMgr;
+	CMyForm*					m_pFormView;
+
+public:
+	list<OBJ_INFO*>::iterator	m_CurObjItr;
+	D3DXVECTOR3					m_vPoint;
+
 };
 
 #ifndef _DEBUG  // ToolView.cpp의 디버그 버전

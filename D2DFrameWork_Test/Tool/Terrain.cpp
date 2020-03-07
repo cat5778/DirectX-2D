@@ -149,7 +149,7 @@ void CTerrain::TileChange(const D3DXVECTOR3 & vPos, const BYTE & byDrawID, const
 	m_vecTile[iIndex]->byDrawID = byDrawID;
 	m_vecTile[iIndex]->byOption = byOption;
 	m_vecTile[iIndex]->wsTexKey=wsTexKey;
-	wcout <<L"Terrain TileChange ="<< m_vecTile[iIndex]->wsTexKey << endl;
+	//wcout <<L"Terrain TileChange ="<< m_vecTile[iIndex]->wsTexKey << endl;
 
 }
 int CTerrain::GetTileIndex(const D3DXVECTOR3& vPos)
@@ -214,8 +214,8 @@ POINT CTerrain::TileDrawConverstion(int _drawID, int XCount, int YCount)
 	POINT tileID;
 	tileID.x = id % XCount;
 	tileID.y = id / XCount;
-	cout << "tileid x=" << tileID.x <<" "<< XCount << endl;
-	cout << "tileid y=" << tileID.y <<" "<< YCount<< endl;
+	//cout << "tileid x=" << tileID.x <<" "<< XCount << endl;
+	//cout << "tileid y=" << tileID.y <<" "<< YCount<< endl;
 	return tileID;
 }
 

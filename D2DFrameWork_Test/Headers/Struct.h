@@ -71,5 +71,26 @@ typedef struct ObjectInfo
 	bool			IsAni;
 	WORD			ImageIDX;
 	OBJECT_TYPE		eObjectType;
-	
+	bool ObjectInfo::operator==(ObjectInfo& objInfo)
+	{
+		if (wstrObjectName.compare(objInfo.wstrObjectName) == 0)
+			return true;
+		return false;
+	}
+	ObjectInfo& ObjectInfo::operator=(const ObjectInfo& objinfo)
+	{
+		wstrObjectName = objinfo.wstrObjectName;
+		wstrObjectKey = objinfo.wstrObjectKey;
+		wstrStateKey = objinfo.wstrStateKey;
+		IsAni = objinfo.IsAni;
+		ImageIDX = objinfo.ImageIDX;
+		eObjectType = objinfo.eObjectType;
+		return *this;
+	}
+
 }OBJ_INFO;
+typedef struct RespawnData
+{
+	D3DXVECTOR3 vPos;
+	BYTE		byImageIDX;
+}RESPAWN_DATA;
