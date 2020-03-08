@@ -192,6 +192,7 @@ void ObjectTool::ReadData()
 		fin.getline(cTemp, 32); // 공백을 포함한 문장 단위(개행 단위)로 읽어오기.
 		temp->eObjectType=(OBJECT_TYPE)atoi(cTemp);
 		m_pObjList.push_back(temp);
+
 	}
 	fin.close();
 	for (auto pObj : m_pObjList)

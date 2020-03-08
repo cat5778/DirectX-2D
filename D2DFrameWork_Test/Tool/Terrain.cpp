@@ -18,9 +18,9 @@ HRESULT CTerrain::Initialize()
 	
 	D3DXVECTOR3 vPos = {};
 	D3DXVECTOR3 vSize = {};
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 100; i++)
 	{
-		for (int j = 0; j < 10; j++)
+		for (int j = 0; j < 100; j++)
 		{
 			vPos = { (float)j*TILECX+ TILECX*0.5f,(float)i*TILECY+ TILECY*0.5f,0.f };
 			vSize = { 1.f,1.f,0.f};
@@ -83,7 +83,7 @@ void CTerrain::Render()
 		D3DXMatrixTranslation(&matTrans,
 			m_vecTile[i]->vPos.x  - m_pView->GetScrollPos(0),
 			m_vecTile[i]->vPos.y  - m_pView->GetScrollPos(1),
-			m_vecTile[i]->vPos.z);
+			1);
 		
 		POINT tID=TileDrawConverstion(m_vecTile[i]->byDrawID, pTexInfo->tImgInfo.Width/TILECX, pTexInfo->tImgInfo.Height/TILECY);
 		fCenterX = TILECX*0.5f;

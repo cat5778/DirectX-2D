@@ -223,12 +223,14 @@ void CToolView::Render()
 			m_vPoint.y - this->GetScrollPos(1),
 			m_vPoint.z = CRespawnManager::GetInstance()->ZOrder(m_vPoint.y));
 
-		fCenterX = TILECX*0.5f;
-		fCenterY = TILECY*0.5f;
+		CRespawnManager::GetInstance()->ConvertCenter(*(*m_pFormView->m_CurObjItr), *pTexInfo, fCenterX, fCenterY);
+		//fCenterX = pTexInfo->tImgInfo.Width *0.5f;
+		//fCenterY = pTexInfo->tImgInfo.Height *0.5f;
 		CDeviceMgr::GetInstance()->GetSprite()->SetTransform(&(matScale * matTrans));
 		CDeviceMgr::GetInstance()->GetSprite()->Draw(pTexInfo->pTexture, nullptr,
-			&D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(140, 255, 255, 255));
+				&D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(140, 255, 255, 255));
 	}
+	//&D3DXVECTOR3(fCenterX, fCenterY, 0.f)
 
 
 
@@ -266,7 +268,6 @@ void CToolView::OnLButtonDown(UINT nFlags, CPoint point)
 		}
 		break;
 	}
-	cout << "Object 갯수=" << CRespawnManager::GetInstance()->m_mObjects.size() << endl;
 	Invalidate(FALSE);
 
 	CScrollView::OnLButtonDown(nFlags, point);
@@ -312,7 +313,6 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 			}
 			break;
 		}
-		cout << "Object 갯수=" << CRespawnManager::GetInstance()->m_mObjects.size() << endl;
 	}
 	else
 	{
@@ -321,33 +321,12 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 		case OBJECT_TERRAIN:
 			break;
 		default:
-			//if (!m_pFormView->m_Obj.first.empty())
-			//{
-			//	D3DXMATRIX matScale, matTrans;
-			//	float fCenterX = 0.f, fCenterY = 0.f;
 				m_vPoint =
 				{
 					(float)point.x + CScrollView::GetScrollPos(0),
 					(float)point.y + CScrollView::GetScrollPos(1),
 					0.f
 				};
-			//	pTexInfo = CTextureMgr::GetInstance()->GetTexInfo(m_pFormView->m_Obj.first, m_pFormView->m_Obj.second, m_pFormView->m_byImageIDX);
-			//	NULL_CHECK(pTexInfo);
-			//	CRespawnManager::GetInstance()->ConvertPos(*(*m_pFormView->m_CurObjItr),*pTexInfo, vPoint);
-
-			//	D3DXMatrixScaling(&matScale,
-			//		1, 1, 1);
-			//	D3DXMatrixTranslation(&matTrans,
-			//		vPoint.x - this->GetScrollPos(0),
-			//		vPoint.y - this->GetScrollPos(1),
-			//		vPoint.z=CRespawnManager::GetInstance()->ZOrder(vPoint.y));
-
-			//	fCenterX = TILECX*0.5f;
-			//	fCenterY = TILECY*0.5f;
-			//	CDeviceMgr::GetInstance()->GetSprite()->SetTransform(&(matScale * matTrans));
-			//	CDeviceMgr::GetInstance()->GetSprite()->Draw(pTexInfo->pTexture, nullptr,
-			//		&D3DXVECTOR3(fCenterX, fCenterY, 0.f), nullptr, D3DCOLOR_ARGB(255, 255, 255, 255));
-			//}
 
 			break;
 		}
@@ -362,6 +341,7 @@ void CToolView::OnMouseMove(UINT nFlags, CPoint point)
 
 void CToolView::OnRButtonDown(UINT nFlags, CPoint point)
 {
+
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 	{
 		D3DXVECTOR3 vPoint =
@@ -370,22 +350,25 @@ void CToolView::OnRButtonDown(UINT nFlags, CPoint point)
 			(float)point.y + CScrollView::GetScrollPos(1),
 			0.f
 		};
-
-
 	
 		switch (m_pFormView->m_eObjType)
 		{
 		case OBJECT_TERRAIN:
 			break;
-		default://TODO: 지금 오브젝트 지우는 거 만드는중!!!
-			
+
+		default:
+			m_vPoint =
+			{
+				(float)point.x + CScrollView::GetScrollPos(0),
+				(float)point.y + CScrollView::GetScrollPos(1),
+				0.f
+			};
+			CRespawnManager::GetInstance()->RemoveObj(m_vPoint);
 			break;
 		}
-
 	}
 	Invalidate(FALSE);
-	cout << "Object 갯수=" << CRespawnManager::GetInstance()->m_mObjects.size() << endl;
-
+	//cout << "Object 갯수=" << CRespawnManager::GetInstance()->m_mObjects.size() << endl;
 	CScrollView::OnRButtonDown(nFlags, point);
 
 }

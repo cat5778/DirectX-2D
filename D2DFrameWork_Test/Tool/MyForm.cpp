@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Tool.h"
+#include "RespawnManager.h"
 #include "MyForm.h"
 // CMyForm
 
@@ -52,6 +53,8 @@ BEGIN_MESSAGE_MAP(CMyForm, CFormView)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN1, &CMyForm::OnDeltaposTimeNum)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CMyForm::OnDeltaposTileOption)
 	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN3, &CMyForm::OnDeltaposImageIDX)
+	ON_BN_CLICKED(IDC_BUTTON6, &CMyForm::OnBnClickedObjSave)
+	ON_BN_CLICKED(IDC_BUTTON7, &CMyForm::OnBnClickedObjLoad)
 END_MESSAGE_MAP()
 
 
@@ -169,7 +172,9 @@ HRESULT CMyForm::ReadData(wstring wstrFilePath)
 		case OBJECT_OBSTACLE:
 			m_ObjectPath.insert(make_pair(szStateKey, m_eObjType));
 			break;
-			//case object_
+		case OBJECT_GRASS:
+			m_ObjectPath.insert(make_pair(szStateKey, m_eObjType));
+			break;
 		case OBJECT_TERRAIN:
 			m_mTilePath.insert(make_pair(szStateKey,szObjectKey));
 			break;
@@ -295,10 +300,13 @@ void CMyForm::OnCbnSelchange()
 	case OBJECT_OBSTACLE:
 		for (auto pObj : m_pObjList)
 		{
-			if (pObj->wstrObjectName.compare(L"")==0)
+			if (pObj->wstrObjectName.compare(L"") == 0)
 				continue;
-			csTemp = pObj->wstrObjectName.c_str();
-			m_ListBox.AddString(csTemp);
+			if (pObj->eObjectType == OBJECT_OBSTACLE)
+			{
+				csTemp = pObj->wstrObjectName.c_str();
+				m_ListBox.AddString(csTemp);
+			}
 		}
 		break;
 	case OBJECT_TRAP:
@@ -310,6 +318,16 @@ void CMyForm::OnCbnSelchange()
 	case OBJECT_NPC:
 		break;
 	case OBJECT_GRASS:
+		for (auto pObj : m_pObjList)
+		{
+			if (pObj->wstrObjectName.compare(L"") == 0)
+				continue;
+			if (pObj->eObjectType == OBJECT_GRASS)
+			{
+				csTemp = pObj->wstrObjectName.c_str();
+				m_ListBox.AddString(csTemp);
+			}
+		}
 		break;
 	case OBJECT_TREE:
 		break;
@@ -412,4 +430,45 @@ void CMyForm::OnDeltaposImageIDX(NMHDR *pNMHDR, LRESULT *pResult)
 		PreiviewObject(m_csCurObjName);
 	}
 	*pResult = 0;
+}
+
+
+void CMyForm::OnBnClickedObjSave()
+{
+	CFileDialog Dlg(FALSE, L".dat", L"力格 绝澜.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Data Files(*.dat)|*.dat|Text Files(*.txt)|*.txt||", this);
+
+	TCHAR szCurrentDir[MAX_STR] = L"";
+
+	::GetCurrentDirectory(MAX_STR, szCurrentDir);
+	::PathRemoveFileSpec(szCurrentDir);
+	::PathCombine(szCurrentDir, szCurrentDir, L"Data");
+
+	Dlg.m_ofn.lpstrInitialDir = szCurrentDir;
+
+	if (IDOK == Dlg.DoModal())
+	{
+	CRespawnManager::GetInstance()->FileSave(Dlg.GetPathName());
+	}
+	//CRespawnManager::GetInstance()->SaveData();
+}
+
+
+void CMyForm::OnBnClickedObjLoad()
+{
+	CFileDialog Dlg(TRUE, L".dat", L"力格 绝澜.dat", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Data Files(*.dat)|*.dat|Text Files(*.txt)|*.txt||", this);
+
+	TCHAR szCurrentDir[MAX_STR] = L"";
+
+	::GetCurrentDirectory(MAX_STR, szCurrentDir);
+	::PathRemoveFileSpec(szCurrentDir);
+	::PathCombine(szCurrentDir, szCurrentDir, L"Data");
+
+	Dlg.m_ofn.lpstrInitialDir = szCurrentDir;
+
+	if (IDOK == Dlg.DoModal())
+		CRespawnManager::GetInstance()->FileLoad(Dlg.GetPathName());
+	//CRespawnManager::GetInstance()->LoadData();
+
 }

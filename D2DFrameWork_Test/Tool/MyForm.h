@@ -43,6 +43,8 @@ public:
 	afx_msg void OnDeltaposTimeNum(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnDeltaposTileOption(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnDeltaposImageIDX(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickedObjSave();
+	afx_msg void OnBnClickedObjLoad();
 private:
 	void ConvertionCtoE(CString csobjType);
 	CString ConvertionEtoC(OBJECT_TYPE eObjectType);
